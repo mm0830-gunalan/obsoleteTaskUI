@@ -1,0 +1,92 @@
+_schema-version: "3.2"
+ID: ObsoleteTaskForm
+version: 0.0.1
+modules:
+- name: ObsoleteTaskForm-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: ObsoleteTaskForm-destination-service
+    parameters:
+      content-target: true
+  - name: ObsoleteTaskForm_html_repo_host
+    parameters:
+      service-key:
+        name: ObsoleteTaskForm_html_repo_host-key
+  - name: uaa_ObsoleteTaskForm
+    parameters:
+      service-key:
+        name: uaa_ObsoleteTaskForm-key
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: ObsoleteTaskForm_ObsoleteTaskForm_html_repo_host
+          ServiceInstanceName: ObsoleteTaskForm-html5-app-host-service
+          ServiceKeyName: ObsoleteTaskForm_html_repo_host-key
+          sap.cloud.service: ObsoleteTaskForm
+        - Authentication: OAuth2UserTokenExchange
+          Name: ObsoleteTaskForm_uaa_ObsoleteTaskForm
+          ServiceInstanceName: ObsoleteTaskForm-xsuaa-service
+          ServiceKeyName: uaa_ObsoleteTaskForm-key
+          sap.cloud.service: ObsoleteTaskForm
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: ObsoleteTaskForm-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: ObsoleteTaskForm_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - obsoletetaskformworkflowuimodule.zip
+      name: obsoletetaskformworkflowuimodule
+      target-path: resources/
+- name: obsoletetaskformworkflowuimodule
+  type: html5
+  path: workflow-ui-module
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: ObsoleteTaskForm-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        subaccount:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: ObsoleteTaskForm-destination-service
+    service-plan: lite
+- name: ObsoleteTaskForm_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: ObsoleteTaskForm-html5-app-host-service
+    service-plan: app-host
+- name: uaa_ObsoleteTaskForm
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: ObsoleteTaskForm-xsuaa-service
+    service-plan: application
+parameters:
+  deploy_mode: html5-repo
