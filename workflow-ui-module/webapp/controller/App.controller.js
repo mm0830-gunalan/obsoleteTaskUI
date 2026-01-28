@@ -794,7 +794,30 @@ sap.ui.define(
       },
 
       onSave: function () {
-        this.completeTask(true);
+
+        const context = this.getOwnerComponent().getModel("context").getData();
+
+        const oModel = this.getView().getModel("obsolete");
+
+        const sWorkflowId = context.workflowId;
+        const aItems = this.getView().getModel("context").getProperty("/obsoleteItems");
+
+        const oPayload = {
+          workflowId: sWorkflowId,
+          items: aItems
+
+        }
+
+
+        oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
+          success: function (oData) {
+            sap.m.MessageBox.success("Saved successfully ");
+          },
+          error: function (oError) {
+            sap.m.MessageBox.error("Failed to save");
+          }
+        });
+        // this.completeTask(true);
       },
       completeTask: function (approvalStatus, outcomeId) {
         // this.getModel("context").setProperty("/approved", approvalStatus);

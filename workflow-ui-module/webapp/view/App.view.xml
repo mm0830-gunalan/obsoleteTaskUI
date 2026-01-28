@@ -328,7 +328,9 @@
                         >
                             <Label text="Sell to subsidiary" />
                             <table:template>
-                                <CheckBox selected="{context>sellToSubsidiary}" />
+                                <CheckBox
+                                    selected="{context>sellToSubsidiary}"
+                                />
                             </table:template>
                         </table:Column>
 
@@ -426,6 +428,12 @@
                             </table:template>
                         </table:Column>
                     </table:columns>
+                    <table:footer>
+                        <Button
+                            text="Save"
+                            press=".onSave"
+                        />
+                    </table:footer>
                 </table:Table>
 
                 <!-- <Table

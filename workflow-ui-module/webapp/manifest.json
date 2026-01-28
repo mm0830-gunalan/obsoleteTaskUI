@@ -157,36 +157,6 @@
           "title": "Company Code",
           "description": "CompanyCode"
         },
-        "handlingVisible": {
-          "type": "boolean",
-          "title": "Handling Visible",
-          "default": false
-        },
-        "handlingEditable": {
-          "type": "boolean",
-          "title": "Handling Editable",
-          "default": false
-        },
-        "handlingRequired": {
-          "type": "boolean",
-          "title": "Handling Required",
-          "default": false
-        },
-        "scrapVisible": {
-          "type": "boolean",
-          "title": "Scrap Visible",
-          "default": false
-        },
-        "scrapEditable": {
-          "type": "boolean",
-          "title": "Scrap Editable",
-          "default": false
-        },
-        "scrapRequired": {
-          "type": "boolean",
-          "title": "Scrap Required",
-          "default": false
-        },
         "workflowId": {
           "type": "string",
           "title": "workflowId",
@@ -196,21 +166,6 @@
           "type": "string",
           "title": "workflowName",
           "description": "Workflow Name"
-        },
-        "alternativeVisible": {
-          "type": "boolean",
-          "title": "Alternative Visible",
-          "default": false
-        },
-        "subsidaryVisible": {
-          "type": "boolean",
-          "title": "Subsidary Visible",
-          "default": false
-        },
-        "componentVisible": {
-          "type": "boolean",
-          "title": "Component Visible",
-          "default": false
         }
       }
     },

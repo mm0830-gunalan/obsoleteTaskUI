@@ -198,24 +198,56 @@ sap.ui.define(
 
         _patchTaskInstance: function (outcomeId) {
           const context = this.getModel("context").getData();
-          var data = {
-            status: "COMPLETED",
-            context: { ...context, comment: context.comment || '' },
-            decision: outcomeId
-          };
 
-          jQuery.ajax({
-            url: `${this._getTaskInstancesBaseURL()}`,
-            method: "PATCH",
-            contentType: "application/json",
-            async: true,
-            data: JSON.stringify(data),
-            headers: {
-              "X-CSRF-Token": this._fetchToken(),
+          const oModel = this.getModel("obsolete");
+
+          const sWorkflowId = context.workflowId;
+          const aItems = this.getModel("context").getProperty("/obsoleteItems");
+
+          const oPayload = {
+            workflowId: sWorkflowId,
+            items: aItems
+
+          }
+
+
+          oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
+            success: function (oData) {
+              sap.m.MessageBox.success("Deep update SUCCESS ");
             },
-          }).done(() => {
-            this._refreshTaskList();
-          })
+            error: function (oError) {
+              sap.m.MessageBox.error("Deep update FAILED");
+              console.error("Deep update error:", oError);
+            }
+          });
+
+
+
+
+
+
+
+
+
+          //Run after updating in the DB
+          // var data = {
+          //   status: "COMPLETED",
+          //   context: { ...context, comment: context.comment || '' },
+          //   decision: outcomeId
+          // };
+
+          // jQuery.ajax({
+          //   url: `${this._getTaskInstancesBaseURL()}`,
+          //   method: "PATCH",
+          //   contentType: "application/json",
+          //   async: true,
+          //   data: JSON.stringify(data),
+          //   headers: {
+          //     "X-CSRF-Token": this._fetchToken(),
+          //   },
+          // }).done(() => {
+          //   this._refreshTaskList();
+          // })
         },
 
         _fetchToken: function () {
