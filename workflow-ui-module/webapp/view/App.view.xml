@@ -162,7 +162,7 @@
                         <table:Column width="10rem">
                             <Label text="Manufacture Part" />
                             <table:template>
-                                <Text text="{context>manufacturePart}" />
+                                <Text text="{context>manufacturerPart}" />
                             </table:template>
                         </table:Column>
 
@@ -188,9 +188,9 @@
                         </table:Column>
 
                         <table:Column width="5rem">
-                            <Label text="Coverage" />
+                            <Label text="Range Coverage" />
                             <table:template>
-                                <Text text="{context>coverage}" />
+                                <Text text="{context>rangeCoverage}" />
                             </table:template>
                         </table:Column>
 
@@ -232,7 +232,7 @@
                         <table:Column width="4rem">
                             <Label text="Total Amount" />
                             <table:template>
-                                <Text text="{context>totalamount}" />
+                                <Text text="{context>totalAmount}" />
                             </table:template>
                         </table:Column>
 

@@ -8,7 +8,65 @@ sap.ui.define(
     "use strict";
 
     return BaseController.extend("obsoletetaskform.workflowuimodule.controller.App", {
-      onInit() {
+      // onInit() {
+      // },
+
+      onInit: function () {
+        setTimeout(() => {
+          const oContextModel = this.getOwnerComponent().getModel("context");
+
+          if (oContextModel.getData() && Object.keys(oContextModel.getData()).length > 0) {
+            // Context already loaded
+            const ctx = oContextModel.getData();
+            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName);
+          }
+
+          oContextModel.attachRequestCompleted(() => {
+            const ctx = oContextModel.getData();
+            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName);
+          });
+
+        }, 0);
+
+        // this._loadFilteredCAPData("VJHBDJVBD", "Plant")
+      },
+
+
+      _loadFilteredCAPData: function (workflowId, sWorkflowName) {
+        const oModel = this.getView().getModel("obsolete");
+        const oContextModel = this.getOwnerComponent().getModel("context");
+        let oView = this.getView();
+        let aFilters = [
+          new sap.ui.model.Filter("workflowId", sap.ui.model.FilterOperator.EQ, workflowId)
+
+        ];
+        if (sWorkflowName === 'Plant'
+        ) {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
+        } else if (sWorkflowName === 'Customer') {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+        }
+
+        oModel.read("/WorkflowItem", {
+          filters: aFilters,
+          success: (oData) => {
+            console.log("CAP Data:", oData);
+            const oResult = oData.results;
+
+            // 1. Create new JSON model
+            const oCapModel = new sap.ui.model.json.JSONModel();
+
+            // 2. Save the data under property "obsoleteItems"
+            oCapModel.setProperty("/obsoleteItems", oResult);
+            oContextModel.setProperty("/obsoleteItems", oResult);
+
+            // 3. Set model to the view with name "capModel"
+            oView.setModel(oCapModel, "capModel");
+          },
+          error: (oError) => {
+            console.error("OData error:", oError);
+          }
+        });
       },
 
       // onSearch: function (oEvent) {

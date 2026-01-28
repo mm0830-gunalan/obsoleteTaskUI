@@ -1,372 +1,216 @@
 {
-    "_version": "1.26.0",
-    "sap.app": {
-        "id": "obsoletetaskform.workflowuimodule",
-        "type": "application",
-        "i18n": "i18n/i18n.properties",
-        "applicationVersion": {
-            "version": "0.0.1"
-        },
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "resources": "resources.json",
-        "sourceTemplate": {
-            "id": "@sap/generator-fiori:basic",
-            "version": "1.8.4",
-            "toolsId": "d6e7def9-7787-4407-8c64-2bd17c7ca782"
-        },
-        "dataSources": {
-            "mainService": {
-                "uri": "/sap/opu/odata/",
-                "type": "OData",
-                "settings": {
-                    "annotations": [],
-                    "localUri": "localService/metadata.xml",
-                    "odataVersion": "2.0"
-                }
-            }
+  "_version": "1.26.0",
+  "sap.app": {
+    "id": "obsoletetaskform.workflowuimodule",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.8.4",
+      "toolsId": "d6e7def9-7787-4407-8c64-2bd17c7ca782"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
         }
-    },
-    "sap.ui": {
-        "technology": "UI5",
-        "icons": {
-            "icon": "",
-            "favIcon": "",
-            "phone": "",
-            "phone@2": "",
-            "tablet": "",
-            "tablet@2": ""
-        },
-        "deviceTypes": {
-            "desktop": true,
-            "tablet": true,
-            "phone": true
+      },
+      "obsolete": {
+        "uri": "/odata/v2/obsolete/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/obsolete/metadata.xml",
+          "odataVersion": "2.0"
         }
-    },
-    "sap.ui5": {
-        "flexEnabled": false,
-        "dependencies": {
-            "minUI5Version": "1.82.2",
-            "libs": {
-                "sap.m": {},
-                "sap.ui.core": {},
-                "sap.f": {},
-                "sap.suite.ui.generic.template": {},
-                "sap.ui.comp": {},
-                "sap.ui.generic.app": {},
-                "sap.ui.table": {},
-                "sap.ushell": {}
-            }
-        },
-        "contentDensities": {
-            "compact": true,
-            "cozy": true
-        },
-        "models": {
-            "i18n": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleName": "obsoletetaskform.workflowuimodule.i18n.i18n"
-                }
-            },
-            "": {
-                "dataSource": "mainService",
-                "preload": true,
-                "settings": {}
-            }
-        },
-        "resources": {
-            "css": [
-                {
-                    "uri": "css/style.css"
-                }
-            ]
-        },
-        "routing": {
-            "config": {
-                "routerClass": "sap.m.routing.Router",
-                "viewType": "XML",
-                "async": true,
-                "viewPath": "obsoletetaskform.workflowuimodule.view",
-                "controlAggregation": "pages",
-                "controlId": "app",
-                "clearControlAggregation": false
-            },
-            "routes": [
-                {
-                    "name": "RouteobsoleteTaskForm",
-                    "pattern": ":?query:",
-                    "target": [
-                        "TargetobsoleteTaskForm"
-                    ]
-                }
-            ],
-            "targets": {
-                "TargetobsoleteTaskForm": {
-                    "viewType": "XML",
-                    "transition": "slide",
-                    "clearControlAggregation": false,
-                    "viewId": "obsoleteTaskForm",
-                    "viewName": "obsoleteTaskForm"
-                }
-            }
-        },
-        "rootView": {
-            "viewName": "obsoletetaskform.workflowuimodule.view.App",
-            "type": "XML",
-            "async": true,
-            "id": "App"
-        }
-    },
-    "sap.cloud": {
-        "public": true,
-        "service": "ObsoleteTaskForm"
-    },
-    "sap.bpa.task": {
-        "_version": "1.0.0",
-        "outcomes": [
-            {
-                "id": "submit",
-                "label": "Submit"
-            }
-        ],
-        "inputs": {
-            "$schema": "http://json-schema.org/draft-07/schema",
-            "title": "input",
-            "type": "object",
-            "required": [
-                "obsoleteItems",
-                "companyCode"
-            ],
-            "properties": {
-                "obsoleteItems": {
-                    "type": "array",
-                    "title": "Obsolete Items",
-                    "items": {
-                        "type": "object",
-                        "required": [
-                            "rfqId",
-                            "plant",
-                            "component",
-                            "description",
-                            "manufacturePart",
-                            "availableStock",
-                            "availableCu",
-                            "lastConsumption",
-                            "coverage",
-                            "pn",
-                            "customer",
-                            "endCustomer",
-                            "reason",
-                            "caused",
-                            "decisionFlow"
-                        ],
-                        "properties": {
-                            "rfqId": {
-                                "type": "string",
-                                "title": "RFQ ID"
-                            },
-                            "plant": {
-                                "type": "string",
-                                "title": "Plant"
-                            },
-                            "component": {
-                                "type": "string",
-                                "title": "Component"
-                            },
-                            "description": {
-                                "type": "string",
-                                "title": "Description"
-                            },
-                            "manufacturePart": {
-                                "type": "string",
-                                "title": "Manufacture Part"
-                            },
-                            "availableStock": {
-                                "type": "number",
-                                "title": "Available Stock"
-                            },
-                            "availableCu": {
-                                "type": "number",
-                                "title": "Available Cu"
-                            },
-                            "lastConsumption": {
-                                "type": "string",
-                                "title": "Last Consumption"
-                            },
-                            "coverage": {
-                                "type": "number",
-                                "title": "Coverage"
-                            },
-                            "pn": {
-                                "type": "string",
-                                "title": "PN"
-                            },
-                            "customer": {
-                                "type": "string",
-                                "title": "Customer"
-                            },
-                            "endCustomer": {
-                                "type": "string",
-                                "title": "End Customer"
-                            },
-                            "reason": {
-                                "type": "number",
-                                "title": "Reason"
-                            },
-                            "caused": {
-                                "type": "string",
-                                "title": "Caused"
-                            },
-                            "handling": {
-                                "type": "string",
-                                "title": "Handling",
-                                "default": ""
-                            },
-                            "decisionFlow": {
-                                "type": "string",
-                                "title": "Decision Flow"
-                            },
-                            "weight": {
-                                "type": "number",
-                                "title": "Weight"
-                            },
-                            "totalamount": {
-                                "type": "number",
-                                "title": "Total Amount"
-                            },
-                            "comments": {
-                                "type": "string",
-                                "title": "Comments"
-                            },
-                            "scrapDecision": {
-                                "type": "string",
-                                "title": "Scrap Decision",
-                                "default": ""
-                            }
-                        }
-                    }
-                },
-                "companyCode": {
-                    "type": "string",
-                    "title": "Company Code",
-                    "description": "CompanyCode"
-                },
-                "handlingVisible": {
-                    "type": "boolean",
-                    "title": "Handling Visible",
-                    "default": false
-                },
-                "handlingEditable": {
-                    "type": "boolean",
-                    "title": "Handling Editable",
-                    "default": false
-                },
-                "handlingRequired": {
-                    "type": "boolean",
-                    "title": "Handling Required",
-                    "default": false
-                },
-                "commentsVisible": {
-                    "type": "boolean",
-                    "title": "Comments Visible",
-                    "default": false
-                },
-                "scrapVisible": {
-                    "type": "boolean",
-                    "title": "Scrap Visible",
-                    "default": false
-                },
-                "scrapEditable": {
-                    "type": "boolean",
-                    "title": "Scrap Editable",
-                    "default": false
-                },
-                "scrapRequired": {
-                    "type": "boolean",
-                    "title": "Scrap Required",
-                    "default": false
-                }
-            }
-        },
-        "outputs": {
-            "$schema": "http://json-schema.org/draft-07/schema",
-            "title": "output",
-            "type": "object",
-            "required": [
-                "obsoleteItems"
-            ],
-            "properties": {
-                "obsoleteItems": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "rfqId": {
-                                "type": "string"
-                            },
-                            "plant": {
-                                "type": "string"
-                            },
-                            "component": {
-                                "type": "string"
-                            },
-                            "description": {
-                                "type": "string"
-                            },
-                            "manufacturePart": {
-                                "type": "string"
-                            },
-                            "availableStock": {
-                                "type": "number"
-                            },
-                            "availableCu": {
-                                "type": "number"
-                            },
-                            "lastConsumption": {
-                                "type": "string"
-                            },
-                            "coverage": {
-                                "type": "number"
-                            },
-                            "pn": {
-                                "type": "string"
-                            },
-                            "customer": {
-                                "type": "string"
-                            },
-                            "endCustomer": {
-                                "type": "string"
-                            },
-                            "reason": {
-                                "type": "number"
-                            },
-                            "caused": {
-                                "type": "string"
-                            },
-                            "handling": {
-                                "type": "string"
-                            },
-                            "comments": {
-                                "type": "string"
-                            },
-                            "weight": {
-                                "type": "number"
-                            },
-                            "totalamount": {
-                                "type": "number"
-                            },
-                            "decisionFlow": {
-                                "type": "string"
-                            },
-                            "scrapDecision": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "category": "standard"
+      }
     }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.82.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "obsoletetaskform.workflowuimodule.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },
+      "obsolete": {
+        "dataSource": "obsolete",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "obsoletetaskform.workflowuimodule.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteobsoleteTaskForm",
+          "pattern": ":?query:",
+          "target": [
+            "TargetobsoleteTaskForm"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetobsoleteTaskForm": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "obsoleteTaskForm",
+          "viewName": "obsoleteTaskForm"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "obsoletetaskform.workflowuimodule.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "ObsoleteTaskForm"
+  },
+  "sap.bpa.task": {
+    "_version": "1.0.0",
+    "outcomes": [
+      {
+        "id": "submit",
+        "label": "Submit"
+      }
+    ],
+    "inputs": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "input",
+      "type": "object",
+      "required": [
+        "companyCode"
+      ],
+      "properties": {
+        "companyCode": {
+          "type": "string",
+          "title": "Company Code",
+          "description": "CompanyCode"
+        },
+        "handlingVisible": {
+          "type": "boolean",
+          "title": "Handling Visible",
+          "default": false
+        },
+        "handlingEditable": {
+          "type": "boolean",
+          "title": "Handling Editable",
+          "default": false
+        },
+        "handlingRequired": {
+          "type": "boolean",
+          "title": "Handling Required",
+          "default": false
+        },
+        "commentsVisible": {
+          "type": "boolean",
+          "title": "Comments Visible",
+          "default": false
+        },
+        "scrapVisible": {
+          "type": "boolean",
+          "title": "Scrap Visible",
+          "default": false
+        },
+        "scrapEditable": {
+          "type": "boolean",
+          "title": "Scrap Editable",
+          "default": false
+        },
+        "scrapRequired": {
+          "type": "boolean",
+          "title": "Scrap Required",
+          "default": false
+        },
+        "workflowId": {
+          "type": "string",
+          "title": "workflowId",
+          "description": "Workflow Id"
+        },
+        "workflowName": {
+          "type": "string",
+          "title": "workflowName",
+          "description": "Workflow Name"
+        }
+      }
+    },
+    "outputs": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "output",
+      "type": "object",
+      "required": [],
+      "properties": {}
+    },
+    "category": "standard"
+  }
 }

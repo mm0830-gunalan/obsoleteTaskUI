@@ -18,6 +18,13 @@
       "authenticationType": "xsuaa"
     },
     {
+      "source": "^/odata/v2/obsolete/(.*)$",
+      "target": "/odata/v2/obsolete/$1",
+      "destination": "OBSOLETE_REPORT",
+      "authenticationType": "xsuaa",
+      "csrfProtection": true
+    },
+    {
       "source": "^/sap/(.*)$",
       "target": "/sap/$1",
       "destination": "None",
