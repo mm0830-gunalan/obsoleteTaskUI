@@ -35,6 +35,10 @@ sap.ui.define(
       _loadFilteredCAPData: function (workflowId, sWorkflowName) {
         const oModel = this.getView().getModel("obsolete");
         const oContextModel = this.getOwnerComponent().getModel("context");
+
+        //SET all property to default false
+
+        this._setDefaultFalse(oContextModel);
         let oView = this.getView();
         let aFilters = [
           new sap.ui.model.Filter("workflowId", sap.ui.model.FilterOperator.EQ, workflowId)
@@ -42,9 +46,24 @@ sap.ui.define(
         ];
         if (sWorkflowName === 'Plant'
         ) {
+          oContextModel.setProperty("/handlingVisible", true);
+          oContextModel.setProperty("/handlingEditable", true);
+          oContextModel.setProperty("/handlingRequired", true);
           aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
         } else if (sWorkflowName === 'Customer') {
+          oContextModel.setProperty("/componentVisible", true);
           aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+        } else if (sWorkflowName === 'Scrap') {
+          oContextModel.setProperty("/scrapVisible", true);
+          oContextModel.setProperty("/scrapEditable", true);
+          oContextModel.setProperty("/scrapRequired", true);
+          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
+        } else if (sWorkflowName === 'AlternativeUsage') {
+          oContextModel.setProperty("/alternativeVisible", true);
+          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
+        } else if (sWorkflowName === 'Subsidiary') {
+          oContextModel.setProperty("/subsidiaryVisible", true);
+          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
         }
 
         oModel.read("/WorkflowItem", {
@@ -67,6 +86,22 @@ sap.ui.define(
             console.error("OData error:", oError);
           }
         });
+      },
+
+      _setDefaultFalse: function (oContextModel) {
+        oContextModel.setProperty("/handlingVisible", false);
+        oContextModel.setProperty("/handlingEditable", false);
+        oContextModel.setProperty("/handlingRequired", false);
+
+        oContextModel.setProperty("/scrapVisible", false);
+        oContextModel.setProperty("/scrapEditable", false);
+        oContextModel.setProperty("/scrapRequired", false);
+
+        oContextModel.setProperty("/alternativeVisible", false);
+
+        oContextModel.setProperty("/subsidiaryVisible", false);
+
+        oContextModel.setProperty("/componentVisible", false);
       },
 
       // onSearch: function (oEvent) {

@@ -172,11 +172,6 @@
           "title": "Handling Required",
           "default": false
         },
-        "commentsVisible": {
-          "type": "boolean",
-          "title": "Comments Visible",
-          "default": false
-        },
         "scrapVisible": {
           "type": "boolean",
           "title": "Scrap Visible",
@@ -201,6 +196,21 @@
           "type": "string",
           "title": "workflowName",
           "description": "Workflow Name"
+        },
+        "alternativeVisible": {
+          "type": "boolean",
+          "title": "Alternative Visible",
+          "default": false
+        },
+        "subsidaryVisible": {
+          "type": "boolean",
+          "title": "Subsidary Visible",
+          "default": false
+        },
+        "componentVisible": {
+          "type": "boolean",
+          "title": "Component Visible",
+          "default": false
         }
       }
     },

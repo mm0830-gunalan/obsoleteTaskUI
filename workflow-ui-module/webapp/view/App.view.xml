@@ -183,7 +183,9 @@
                         <table:Column width="6rem">
                             <Label text="Last Consumption" />
                             <table:template>
-                                <Text text="{context>lastConsumption}" />
+                                <Text
+                                    text="{path: 'context>lastConsumption', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'}}"
+                                />
                             </table:template>
                         </table:Column>
 
@@ -282,6 +284,56 @@
 
                         <table:Column
                             width="9rem"
+                            visible="{context>/componentVisible}"
+                        >
+                            <Label text="Customer Response" />
+                            <table:template>
+                                <Select
+                                    selectedKey="{context>customerResponse}"
+                                    editable="{context>/componentVisible}"
+                                >
+                                    <core:Item
+                                        key="-----Select-----"
+                                        text="-----Select-----"
+                                    />
+                                    <core:Item
+                                        key="Customer doesn't pay"
+                                        text="Customer doesn't pay"
+                                    />
+                                    <core:Item
+                                        key="Customer pays"
+                                        text="Customer pays"
+                                    />
+                                    <core:Item
+                                        key="Customer purchase obsolete stock"
+                                        text="Customer purchase obsolete stock"
+                                    />
+                                </Select>
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="4rem"
+                            visible="{context>/alternativeVisible}"
+                        >
+                            <Label text="Internal Use" />
+                            <table:template>
+                                <CheckBox selected="{context>internalUse}" />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="4rem"
+                            visible="{context>/subsidiaryVisible}"
+                        >
+                            <Label text="Sell to subsidiary" />
+                            <table:template>
+                                <CheckBox selected="{context>sellToSubsidiary}" />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="9rem"
                             visible="{context>/scrapVisible}"
                         >
                             <Label
@@ -298,12 +350,12 @@
                                         text="-----Select-----"
                                     />
                                     <core:Item
-                                        key="Scrapped"
-                                        text="Scrapped"
+                                        key="To be scrapped"
+                                        text="To be scrapped"
                                     />
                                     <core:Item
-                                        key="NotScrapped"
-                                        text="NotScrapped"
+                                        key="Keep"
+                                        text="Keep"
                                     />
                                 </Select>
                             </table:template>
@@ -311,20 +363,69 @@
 
                         <table:Column
                             width="12rem"
-                            visible="{context>/commentsVisible}"
+                            visible="{context>/handlingRequired}"
                         >
                             <Label text="Comments" />
                             <table:template>
                                 <TextArea
-                                    value="{context>comments}"
+                                    value="{context>commentHandling}"
+                                    rows="1"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="12rem"
+                            visible="{context>/scrapRequired}"
+                        >
+                            <Label text="Comments" />
+                            <table:template>
+                                <TextArea
+                                    value="{context>commentScrap}"
+                                    rows="1"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="12rem"
+                            visible="{context>/alternativeVisible}"
+                        >
+                            <Label text="Comments" />
+                            <table:template>
+                                <TextArea
+                                    value="{context>commentAlternative}"
+                                    rows="1"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="12rem"
+                            visible="{context>/subsidiaryVisible}"
+                        >
+                            <Label text="Comments" />
+                            <table:template>
+                                <TextArea
+                                    value="{context>commentSubsidiary}"
+                                    rows="1"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="12rem"
+                            visible="{context>/componentVisible}"
+                        >
+                            <Label text="Comments" />
+                            <table:template>
+                                <TextArea
+                                    value="{context>commentComponent}"
                                     rows="1"
                                 />
                             </table:template>
                         </table:Column>
                     </table:columns>
-                    <table:footer>
-                        <Button text="Save" press=".onSave" />
-                    </table:footer>
                 </table:Table>
 
                 <!-- <Table
