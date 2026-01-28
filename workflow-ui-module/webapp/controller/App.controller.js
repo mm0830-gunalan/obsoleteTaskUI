@@ -12,6 +12,7 @@ sap.ui.define(
       // },
 
       onInit: function () {
+        this._getCurrentUser();
         setTimeout(() => {
           const oContextModel = this.getOwnerComponent().getModel("context");
 
@@ -29,6 +30,24 @@ sap.ui.define(
         }, 0);
 
         // this._loadFilteredCAPData("VJHBDJVBD", "Plant")
+      },
+      _getCurrentUser: function () {
+        jQuery.ajax({
+          url: "/user-api/currentUser",
+          method: "GET",
+          success: function (oUserData) {
+            console.log("Current User:", oUserData);
+            console.log("User Email:", oUserData.email);
+            console.log("User Name:", oUserData.firstname + " " + oUserData.lastname);
+
+            // Store in a JSON model
+            var oUserModel = new sap.ui.model.json.JSONModel(oUserData);
+            this.getView().setModel(oUserModel, "user");
+          }.bind(this),
+          error: function (oError) {
+            console.error("Error fetching user:", oError);
+          }
+        });
       },
 
 
