@@ -166,6 +166,11 @@
           "type": "string",
           "title": "workflowName",
           "description": "Workflow Name"
+        },
+        "caused": {
+          "type": "string",
+          "title": "caused",
+          "description": "Caused"
         }
       }
     },

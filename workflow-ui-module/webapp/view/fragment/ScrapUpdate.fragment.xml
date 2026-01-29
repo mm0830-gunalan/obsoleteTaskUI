@@ -14,8 +14,8 @@
                 id="massHandlingSelectScrap"
                 width="100%">
                 <items>
-                    <core:Item key="Scrapped" text="Scrapped" />
-                    <core:Item key="NotScrapped" text="NotScrapped" />
+                    <core:Item key="To be scrapped" text="To be scrapped" />
+                    <core:Item key="Keep" text="Keep" />
                 </items>
             </Select>
         </VBox>

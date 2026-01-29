@@ -21,12 +21,12 @@ sap.ui.define(
           if (oContextModel.getData() && Object.keys(oContextModel.getData()).length > 0) {
             // Context already loaded
             const ctx = oContextModel.getData();
-            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName);
+            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName, ctx.caused);
           }
 
           oContextModel.attachRequestCompleted(() => {
             const ctx = oContextModel.getData();
-            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName);
+            this._loadFilteredCAPData(ctx.workflowId, ctx.workflowName, ctx.caused);
           });
 
         }, 0);
@@ -52,7 +52,7 @@ sap.ui.define(
       },
 
 
-      _loadFilteredCAPData: function (workflowId, sWorkflowName) {
+      _loadFilteredCAPData: function (workflowId, sWorkflowName, sCaused) {
         const oModel = this.getView().getModel("obsolete");
         const oContextModel = this.getOwnerComponent().getModel("context");
 
@@ -80,13 +80,21 @@ sap.ui.define(
           oContextModel.setProperty("/scrapVisible", true);
           oContextModel.setProperty("/scrapEditable", true);
           oContextModel.setProperty("/scrapRequired", true);
-          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
+          aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Scrapping"))
         } else if (sWorkflowName === 'AlternativeUsage') {
           oContextModel.setProperty("/alternativeVisible", true);
-          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
+          aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Alternative use"))
         } else if (sWorkflowName === 'Subsidiary') {
           oContextModel.setProperty("/subsidiaryVisible", true);
-          aFilters.push(new sap.ui.model.Filter("scrap", sap.ui.model.FilterOperator.EQ, "Scrapped"))
+          aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Alternative use"))
+          aFilters.push(new sap.ui.model.Filter("internalUse", sap.ui.model.FilterOperator.EQ, false))
+        }
+
+        if (sCaused === "PlantCaused") {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
+        } else if (sCaused === "CustomerCaused") {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+          aFilters.push(new sap.ui.model.Filter("decisionFlow", sap.ui.model.FilterOperator.EQ, "Customer doesn't pay"))
         }
 
         oModel.read("/WorkflowItem", {
@@ -838,7 +846,7 @@ sap.ui.define(
           const oContextModel = this.getOwnerComponent()
             .getModel("context");
 
-            
+
           const sWorkflowId = context.workflowId;
           const aItems = this.getView()
             .getModel("context")

@@ -396,7 +396,8 @@ sap.ui.define(
             context: {
               companyCode: context.companyCode,
               workflowId: context.workflowId,
-              workflowName: context.workflowName
+              workflowName: context.workflowName,
+              caused: context.caused
             },
             decision: outcomeId
           };
