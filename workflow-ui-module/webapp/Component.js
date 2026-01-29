@@ -177,6 +177,69 @@ sap.ui.define(
         },
 
 
+        _getTaskInstancesStatusURL: function () {
+          return (
+            this._getWorkflowRuntimeBaseURL() +
+            "/task-instances/" +
+            this.getTaskInstanceID()
+          );
+        },
+
+        _checkTaskStatus: function () {
+
+          const sEmail = this.getModel("context")
+            .getProperty("/User/email");
+
+          return new Promise((resolve, reject) => {
+
+            jQuery.ajax({
+              url: this._getTaskInstancesStatusURL(),
+              method: "GET",
+              contentType: "application/json",
+              headers: {
+                "X-CSRF-Token": this._fetchToken()
+              },
+              success: function (oData) {
+
+                const sStatus = oData.status;
+                const sProcessor = oData.processor;
+
+                //  Unclaimed → allowed
+                if (sStatus === "READY") {
+                  resolve(true);
+                  return;
+                }
+
+                //  Claimed by current user → allowed
+                if (sStatus === "RESERVED" && sProcessor === sEmail) {
+                  resolve(true);
+                  return;
+                }
+
+                //  Claimed by someone else
+                if (sStatus === "RESERVED" && sProcessor && sProcessor !== sEmail) {
+                  reject(`Task is already RESERVED by ${sProcessor}. Please refresh.`);
+                  return;
+                }
+
+                //  Completed
+                if (sStatus === "COMPLETED") {
+                  reject("Task is already COMPLETED. Please refresh.");
+                  return;
+                }
+
+                //  Fallback (unexpected state)
+                reject(`Task is in invalid state: ${sStatus}`);
+              },
+              error: function () {
+                reject("Unable to check task status");
+              }
+            });
+
+          });
+        },
+
+
         // _patchTaskInstance: function (outcomeId) {
         //   var data = {
         //     status: "COMPLETED",
@@ -196,9 +259,21 @@ sap.ui.define(
         //   });
         // },
 
-        _patchTaskInstance: function (outcomeId) {
-          const context = this.getModel("context").getData();
+        _patchTaskInstance: async function (outcomeId) {
 
+          const oRoot = this.getRootControl();
+          oRoot.setBusy(true);
+
+          try {
+            // 🔒 1. Check task status first
+            await this._checkTaskStatus();
+          } catch (sErrorMsg) {
+            oRoot.setBusy(false);
+            sap.m.MessageBox.warning(sErrorMsg);
+            return;
+          }
+
+          const context = this.getModel("context").getData();
           const oModel = this.getModel("obsolete");
 
           const sWorkflowId = context.workflowId;
@@ -207,47 +282,57 @@ sap.ui.define(
           const oPayload = {
             workflowId: sWorkflowId,
             items: aItems
+          };
 
+          // 🔄 2. Update DB (deep update)
+          try {
+            await new Promise((resolve, reject) => {
+              oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
+                success: resolve,
+                error: reject
+              });
+            });
+          } catch (oError) {
+            oRoot.setBusy(false);
+            sap.m.MessageBox.error("Failed to save data. Task not completed.");
+            console.error("Deep update error:", oError);
+            return;
           }
 
-
-          oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
-            success: function (oData) {
-              sap.m.MessageBox.success("Deep update SUCCESS ");
+          // ✅ 3. Complete the task ONLY after DB update succeeds
+          const data = {
+            status: "COMPLETED",
+            context: {
+              companyCode: context.companyCode,
+              workflowId: context.workflowId,
+              workflowName: context.workflowName
             },
-            error: function (oError) {
-              sap.m.MessageBox.error("Deep update FAILED");
-              console.error("Deep update error:", oError);
-            }
-          });
+            decision: outcomeId
+          };
 
+          try {
+            await new Promise((resolve, reject) => {
+              jQuery.ajax({
+                url: this._getTaskInstancesBaseURL(),
+                method: "PATCH",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                headers: {
+                  "X-CSRF-Token": this._fetchToken()
+                }
+              }).done(resolve).fail(reject);
+            });
 
+            // sap.m.MessageBox.success("Task submitted successfully");
+            this._refreshTaskList();
 
+          } catch (oError) {
+            sap.m.MessageBox.error("Data saved, but task completion failed");
+            console.error("Task completion error:", oError);
+          }
 
-
-
-
-
-
-          //Run after updating in the DB
-          // var data = {
-          //   status: "COMPLETED",
-          //   context: { ...context, comment: context.comment || '' },
-          //   decision: outcomeId
-          // };
-
-          // jQuery.ajax({
-          //   url: `${this._getTaskInstancesBaseURL()}`,
-          //   method: "PATCH",
-          //   contentType: "application/json",
-          //   async: true,
-          //   data: JSON.stringify(data),
-          //   headers: {
-          //     "X-CSRF-Token": this._fetchToken(),
-          //   },
-          // }).done(() => {
-          //   this._refreshTaskList();
-          // })
+          // 🧹 4. Clear busy at the very end
+          oRoot.setBusy(false);
         },
 
         _fetchToken: function () {

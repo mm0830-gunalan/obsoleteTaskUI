@@ -265,6 +265,7 @@
                                 <Select
                                     selectedKey="{context>handling}"
                                     editable="{context>/handlingEditable}"
+                                    change=".onChangeDropdown"
                                 >
                                     <core:Item
                                         key=""
@@ -291,6 +292,7 @@
                                 <Select
                                     selectedKey="{context>customerResponse}"
                                     editable="{context>/componentVisible}"
+                                    change=".onChangeDropdown"
                                 >
                                     <core:Item
                                         key="-----Select-----"
@@ -346,6 +348,7 @@
                                 <Select
                                     selectedKey="{context>scrapDecision}"
                                     editable="{context>/scrapEditable}"
+                                    change=".onChangeDropdown"
                                 >
                                     <core:Item
                                         key=""
@@ -372,6 +375,7 @@
                                 <TextArea
                                     value="{context>commentHandling}"
                                     rows="1"
+                                    change=".onChangeComment"
                                 />
                             </table:template>
                         </table:Column>
@@ -385,6 +389,7 @@
                                 <TextArea
                                     value="{context>commentScrap}"
                                     rows="1"
+                                    change=".onChangeComment"
                                 />
                             </table:template>
                         </table:Column>
@@ -398,6 +403,7 @@
                                 <TextArea
                                     value="{context>commentAlternative}"
                                     rows="1"
+                                    change=".onChangeComment"
                                 />
                             </table:template>
                         </table:Column>
@@ -411,6 +417,7 @@
                                 <TextArea
                                     value="{context>commentSubsidiary}"
                                     rows="1"
+                                    change=".onChangeComment"
                                 />
                             </table:template>
                         </table:Column>
@@ -424,6 +431,7 @@
                                 <TextArea
                                     value="{context>commentComponent}"
                                     rows="1"
+                                    change=".onChangeComment"
                                 />
                             </table:template>
                         </table:Column>

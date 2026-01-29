@@ -32,17 +32,16 @@ sap.ui.define(
         // this._loadFilteredCAPData("VJHBDJVBD", "Plant")
       },
       _getCurrentUser: function () {
+        const oContextModel = this.getOwnerComponent().getModel("context");
+
         jQuery.ajax({
           url: "/user-api/currentUser",
           method: "GET",
           success: function (oUserData) {
-            console.log("Current User:", oUserData);
-            console.log("User Email:", oUserData.email);
-            console.log("User Name:", oUserData.firstname + " " + oUserData.lastname);
-
             // Store in a JSON model
             var oUserModel = new sap.ui.model.json.JSONModel(oUserData);
             this.getView().setModel(oUserModel, "user");
+            oContextModel.setProperty("/User", oUserData)
           }.bind(this),
           error: function (oError) {
             console.error("Error fetching user:", oError);
@@ -222,6 +221,7 @@ sap.ui.define(
 
 
       onApplyHandlingUpdate: function () {
+        const sCurrentUser = this.getView().getModel('user').getData().email;
         var sSelectedHandling = sap.ui.getCore()
           .byId("massHandlingSelect")
           .getSelectedKey();
@@ -232,10 +232,14 @@ sap.ui.define(
         }
 
         // ✅ Loop over selected binding contexts
-        this._aSelectedContexts.forEach(function (oContext) {
+        this._aSelectedContexts.forEach((oContext) => {
           oContext.getModel().setProperty(
             oContext.getPath() + "/handling",
             sSelectedHandling
+          );
+          oContext.getModel().setProperty(
+            oContext.getPath() + `/modifiedBy`,
+            sCurrentUser
           );
         });
         this.byId("obsoleteTable").clearSelection();
@@ -283,6 +287,8 @@ sap.ui.define(
 
 
       onApplyScrapUpdate: function () {
+
+        const sCurrentUser = this.getView().getModel('user').getData().email;
         var sSelectedHandling = sap.ui.getCore()
           .byId("massHandlingSelectScrap")
           .getSelectedKey();
@@ -293,10 +299,14 @@ sap.ui.define(
         }
 
         // ✅ Loop over selected binding contexts
-        this._aSelectedContexts.forEach(function (oContext) {
+        this._aSelectedContexts.forEach((oContext) => {
           oContext.getModel().setProperty(
             oContext.getPath() + "/scrapDecision",
             sSelectedHandling
+          );
+          oContext.getModel().setProperty(
+            oContext.getPath() + `/modifiedBy`,
+            sCurrentUser
           );
         });
         this.byId("obsoleteTable").clearSelection();
@@ -505,6 +515,25 @@ sap.ui.define(
         this._oUpdateCommentsDialog.open();
       },
       onApplyComments: function () {
+
+        const oContextModel = this.getOwnerComponent().getModel("context").getData();
+        const sWorkflowName = oContextModel.workflowName;
+        let sDynamicComment = "";
+
+        if (sWorkflowName === 'Plant') {
+          sDynamicComment = "commentHandling"
+        } else if (sWorkflowName === 'Customer') {
+          sDynamicComment = "commentComponent"
+        } else if (sWorkflowName === 'Scrap') {
+          sDynamicComment = "commentScrap"
+        } else if (sWorkflowName === 'AlternativeUsage') {
+          sDynamicComment = "commentAlternative"
+        } else if (sWorkflowName === 'Subsidiary') {
+          sDynamicComment = "commentSubsidiary"
+        }
+
+        const sCurrentUser = this.getView().getModel('user').getData().email;
+
         var sComment = sap.ui.getCore().byId("bulkComments").getValue();
 
         if (!sComment) {
@@ -513,10 +542,14 @@ sap.ui.define(
         }
 
         //  update model via binding contexts
-        this._aSelectedContexts.forEach(function (oContext) {
+        this._aSelectedContexts.forEach((oContext) => {
           oContext.getModel().setProperty(
-            oContext.getPath() + "/comments",
+            oContext.getPath() + `/${sDynamicComment}`,
             sComment
+          );
+          oContext.getModel().setProperty(
+            oContext.getPath() + `/modifiedBy`,
+            sCurrentUser
           );
         });
 
@@ -525,6 +558,47 @@ sap.ui.define(
 
         sap.m.MessageToast.show("Comments updated for selected rows.");
       },
+
+      onChangeDropdown: function (oEvent) {
+
+        // 1️⃣ Get current user email
+        const sCurrentUser = this.getView()
+          .getModel("user")
+          .getData()
+          .email;
+
+        // 2️⃣ Get row binding context
+        const oCtx = oEvent.getSource().getBindingContext("context");
+        if (!oCtx) {
+          return;
+        }
+
+        // 3️⃣ Update ONLY modifiedBy
+        const sPath = oCtx.getPath() + "/modifiedBy";
+        oCtx.getModel().setProperty(sPath, sCurrentUser);
+
+      },
+
+      onChangeComment: function (oEvent) {
+
+        // 1. Get the current user
+        const sCurrentUser = this.getView().getModel("user").getData().email;
+
+        // 2. Get the binding context (row in the table)
+        const oCtx = oEvent.getSource().getBindingContext("context");
+
+        if (!oCtx) {
+          console.error("No binding context found");
+          return;
+        }
+
+        // 3. Build the path for modifiedBy field
+        const sPath = oCtx.getPath() + "/modifiedBy";
+
+        // 4. Update ONLY the modifiedBy field
+        oCtx.getModel().setProperty(sPath, sCurrentUser);
+      },
+
 
       onCloseCommentsDialog: function () {
         this._oUpdateCommentsDialog.close();
@@ -589,8 +663,19 @@ sap.ui.define(
         ];
       },
 
-      onSave: function () {
+      onSave: async function () {
 
+
+        //Check whether task is already submitted or not
+        const oView = this.getView();
+        oView.setBusy(true);
+        try {
+          await this._checkTaskStatus();
+        } catch (sErrorMsg) {
+          oView.setBusy(false);
+          sap.m.MessageBox.warning(sErrorMsg);
+          return;
+        }
         const context = this.getOwnerComponent().getModel("context").getData();
 
         const oModel = this.getView().getModel("obsolete");
@@ -607,13 +692,68 @@ sap.ui.define(
 
         oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
           success: function (oData) {
+            oView.setBusy(false);
             sap.m.MessageBox.success("Saved successfully ");
           },
           error: function (oError) {
+            oView.setBusy(false);
             sap.m.MessageBox.error("Failed to save");
           }
         });
-        // this.completeTask(true);
+
+      },
+
+      _checkTaskStatus: function () {
+
+        const sEmail = this.getView().getModel("user").getData().email;
+        return new Promise((resolve, reject) => {
+
+          jQuery.ajax({
+            url: this._getTaskInstancesStatusURL(),
+            method: "GET",
+            contentType: "application/json",
+            headers: {
+              "X-CSRF-Token": this._fetchToken()
+            },
+            success: function (oData) {
+
+              // Example response: the JSON you shared
+              const sStatus = oData.status;
+              const sProcessor = oData.processor;
+
+              if (sStatus === "READY") {
+                resolve(true);
+                return;
+              } if (sStatus === "RESERVED" && sProcessor === sEmail) {
+                resolve(true);
+                return;
+              }
+              //  Claimed by someone else
+              if (sStatus === "RESERVED" && sProcessor && sProcessor !== sEmail) {
+                reject(`Task is already RESERVED by ${sProcessor}. Please refresh.`);
+                return;
+              } //  Completed
+              if (sStatus === "COMPLETED") {
+                reject("Task is already COMPLETED. Please refresh.");
+                return;
+              } else {
+                reject(`Task is in invalid state: ${sStatus}`);
+                return;
+              }
+            },
+            error: function () {
+              reject("Unable to check task status");
+            }
+          });
+
+        });
+      },
+      _getTaskInstancesStatusURL: function () {
+        return (
+          this._getWorkflowRuntimeBaseURL() +
+          "/task-instances/" +
+          this.getTaskInstanceID()
+        );
       },
       completeTask: function (approvalStatus, outcomeId) {
         // this.getModel("context").setProperty("/approved", approvalStatus);
