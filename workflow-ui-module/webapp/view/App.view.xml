@@ -108,6 +108,12 @@
                                 visible="{context>/scrapEditable}"
                             />
                             <Button
+                                text="Update Customer Response"
+                                type="Emphasized"
+                                press="onUpdateCustomer"
+                                visible="{context>/componentVisible}"
+                            />
+                            <Button
                                 text="Update Comments"
                                 type="Emphasized"
                                 press="onUpdateComments"
@@ -149,7 +155,11 @@
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="15rem">
+                        <table:Column
+                            width="15rem"
+                            sortProperty="description"
+                            filterProperty="description"
+                        >
                             <Label text="Description" />
                             <table:template>
                                 <Text
@@ -159,21 +169,33 @@
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="10rem">
+                        <table:Column
+                            width="10rem"
+                            sortProperty="manufacturerPart"
+                            filterProperty="manufacturerPart"
+                        >
                             <Label text="Manufacture Part" />
                             <table:template>
                                 <Text text="{context>manufacturerPart}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="5rem">
+                        <table:Column
+                            width="5rem"
+                            sortProperty="availableStock"
+                            filterProperty="availableStock"
+                        >
                             <Label text="Available Stock" />
                             <table:template>
                                 <Text text="{context>availableStock}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="5rem">
+                        <table:Column
+                            width="5rem"
+                            sortProperty="availableCu"
+                            filterProperty="availableCu"
+                        >
                             <Label text="Available CU" />
                             <table:template>
                                 <Text text="{context>availableCu}" />
@@ -189,63 +211,100 @@
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="5rem">
+                        <table:Column
+                            width="5rem"
+                            sortProperty="rangeCoverage"
+                            filterProperty="rangeCoverage"
+                        >
                             <Label text="Range Coverage" />
                             <table:template>
                                 <Text text="{context>rangeCoverage}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column
+                            width="4rem"
+                            sortProperty="pn"
+                            filterProperty="pn"
+                        >
                             <Label text="PN" />
                             <table:template>
                                 <Text text="{context>pn}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="10rem">
+                        <table:Column
+                            width="10rem"
+                            sortProperty="customer"
+                            filterProperty="customer"
+                        >
                             <Label text="Customer" />
                             <table:template>
                                 <Text text="{context>customer}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="10rem">
+                        <table:Column
+                            width="10rem"
+                            sortProperty="endCustomer"
+                            filterProperty="endCustomer"
+                        >
                             <Label text="End Customer" />
                             <table:template>
                                 <Text text="{context>endCustomer}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="3rem">
+                        <table:Column
+                            width="3rem"
+                            sortProperty="reason"
+                            filterProperty="reason"
+                        >
                             <Label text="Reason" />
                             <table:template>
                                 <Text text="{context>reason}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="7rem">
+                        <table:Column
+                            width="7rem"
+                            sortProperty="caused"
+                            filterProperty="caused"
+                        >
                             <Label text="Caused" />
                             <table:template>
                                 <Text text="{context>caused}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column
+                            width="4rem"
+                            sortProperty="totalAmount"
+                            filterProperty="totalAmount"
+                        >
                             <Label text="Total Amount" />
                             <table:template>
                                 <Text text="{context>totalAmount}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column
+                            width="4rem"
+                            sortProperty="weight"
+                            filterProperty="weight"
+                        >
                             <Label text="Weight" />
                             <table:template>
                                 <Text text="{context>weight}" />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="9rem">
+                        <table:Column
+                            width="9rem"
+                            sortProperty="decisionFlow"
+                            filterProperty="decisionFlow"
+                            visible="{context>/decisionFlowVisible}"
+                        >
                             <Label text="Decision Flow" />
                             <table:template>
                                 <Text text="{context>decisionFlow}" />
@@ -287,7 +346,10 @@
                             width="9rem"
                             visible="{context>/componentVisible}"
                         >
-                            <Label text="Customer Response" />
+                            <Label
+                                text="Customer Response"
+                                required="{context>/componentVisible}"
+                            />
                             <table:template>
                                 <Select
                                     selectedKey="{context>customerResponse}"
@@ -295,7 +357,7 @@
                                     change=".onChangeDropdown"
                                 >
                                     <core:Item
-                                        key="-----Select-----"
+                                        key=""
                                         text="-----Select-----"
                                     />
                                     <core:Item

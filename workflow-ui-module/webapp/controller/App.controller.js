@@ -16,6 +16,8 @@ sap.ui.define(
         setTimeout(() => {
           const oContextModel = this.getOwnerComponent().getModel("context");
 
+          oContextModel.setProperty("/deletedItems", []);
+
           if (oContextModel.getData() && Object.keys(oContextModel.getData()).length > 0) {
             // Context already loaded
             const ctx = oContextModel.getData();
@@ -58,10 +60,12 @@ sap.ui.define(
 
         this._setDefaultFalse(oContextModel);
         let oView = this.getView();
+        oView.setBusy(true);
         let aFilters = [
           new sap.ui.model.Filter("workflowId", sap.ui.model.FilterOperator.EQ, workflowId)
 
         ];
+        aFilters.push(new sap.ui.model.Filter("isActive", sap.ui.model.FilterOperator.EQ, true))
         if (sWorkflowName === 'Plant'
         ) {
           oContextModel.setProperty("/handlingVisible", true);
@@ -70,6 +74,7 @@ sap.ui.define(
           aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
         } else if (sWorkflowName === 'Customer') {
           oContextModel.setProperty("/componentVisible", true);
+          oContextModel.setProperty("/decisionFlowVisible", false);
           aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
         } else if (sWorkflowName === 'Scrap') {
           oContextModel.setProperty("/scrapVisible", true);
@@ -99,9 +104,12 @@ sap.ui.define(
 
             // 3. Set model to the view with name "capModel"
             oView.setModel(oCapModel, "capModel");
+            oContextModel.setProperty("/deletedItems", []);
+            oView.setBusy(false);
           },
           error: (oError) => {
             console.error("OData error:", oError);
+            oView.setBusy(false);
           }
         });
       },
@@ -120,6 +128,8 @@ sap.ui.define(
         oContextModel.setProperty("/subsidiaryVisible", false);
 
         oContextModel.setProperty("/componentVisible", false);
+
+        oContextModel.setProperty("/decisionFlowVisible", true);
       },
 
 
@@ -315,6 +325,68 @@ sap.ui.define(
       },
 
 
+      onUpdateCustomer: function () {
+        var oTable = this.byId("obsoleteTable");
+        var aSelectedIndices = oTable.getSelectedIndices();
+
+        if (!aSelectedIndices.length) {
+          sap.m.MessageToast.show("Please select at least one row");
+          return;
+        }
+
+        this._aSelectedContextsCustomer = [];
+
+        aSelectedIndices.forEach(function (iIndex) {
+          var oContext = oTable.getContextByIndex(iIndex);
+          if (oContext) {
+            this._aSelectedContextsCustomer.push(oContext);
+          }
+        }.bind(this));
+
+        if (!this._oCustomerDialog) {
+          this._oCustomerDialog = sap.ui.xmlfragment(
+            "obsoletetaskform.workflowuimodule.view.fragment.CustomerUpdate",
+            this
+          );
+          this.getView().addDependent(this._oCustomerDialog);
+        }
+
+        sap.ui.getCore().byId("massCustomerSelect").setSelectedKey("");
+        this._oCustomerDialog.open();
+      },
+      onCancelCustomerDialog: function () {
+        this._oCustomerDialog.close();
+      },
+
+      onApplyCustomerUpdate: function () {
+
+        const sCurrentUser = this.getView().getModel('user').getData().email;
+        var sSelectedCustomer = sap.ui.getCore()
+          .byId("massCustomerSelect")
+          .getSelectedKey();
+
+        if (!sSelectedCustomer) {
+          sap.m.MessageToast.show("Please select Customer response value");
+          return;
+        }
+
+        // ✅ Loop over selected binding contexts
+        this._aSelectedContextsCustomer.forEach((oContext) => {
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/customerResponse",
+            sSelectedCustomer
+          );
+          oContext.getModel().setProperty(
+            oContext.getPath() + `/modifiedBy`,
+            sCurrentUser
+          );
+        });
+        this.byId("obsoleteTable").clearSelection();
+        this._oCustomerDialog.close();
+        sap.m.MessageToast.show("Customer response updated successfully");
+      },
+
+
       onOpenFilterDialog: function () {
         const oModel = this.getView().getModel("context");
         const aItems = oModel.getProperty("/obsoleteItems");
@@ -444,45 +516,85 @@ sap.ui.define(
       },
 
 
-      onDeleteSelected: function () {
-        var oTable = this.byId("obsoleteTable");
-        var oModel = this.getView().getModel("context");
+      // onDeleteSelected: function () {
+      //   var oTable = this.byId("obsoleteTable");
+      //   var oModel = this.getView().getModel("context");
 
-        var aSelectedIndices = oTable.getSelectedIndices();
+      //   var aSelectedIndices = oTable.getSelectedIndices();
+
+      //   if (!aSelectedIndices.length) {
+      //     sap.m.MessageToast.show("Please select at least one row to delete.");
+      //     return;
+      //   }
+
+      //   // Sort descending to avoid index shift
+      //   aSelectedIndices.sort(function (a, b) {
+      //     return b - a;
+      //   });
+
+      //   aSelectedIndices.forEach(function (iIndex) {
+      //     var oContext = oTable.getContextByIndex(iIndex);
+      //     if (oContext) {
+      //       oModel.setProperty(oContext.getPath(), null);
+      //     }
+      //   });
+
+      //   // Remove null entries safely
+      //   var aItems = oModel.getProperty("/obsoleteItems") || [];
+      //   aItems = aItems.filter(function (item) {
+      //     return item !== null;
+      //   });
+
+      //   oModel.setProperty("/obsoleteItems", aItems);
+      //   this.byId("obsoleteTable").clearSelection();
+
+      //   // oTable.clearSelection();
+
+      //   sap.m.MessageToast.show("Selected rows deleted.");
+      // },
+
+
+      onDeleteSelected: function () {
+
+        const oTable = this.byId("obsoleteTable");
+        const oContextModel = this.getView().getModel("context");
+
+        const aSelectedIndices = oTable.getSelectedIndices();
 
         if (!aSelectedIndices.length) {
           sap.m.MessageToast.show("Please select at least one row to delete.");
           return;
         }
 
-        // Sort descending to avoid index shift
-        aSelectedIndices.sort(function (a, b) {
-          return b - a;
+        let aItems = oContextModel.getProperty("/obsoleteItems") || [];
+        let aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
+
+        // Sort DESC to avoid index shift
+        aSelectedIndices.sort((a, b) => b - a);
+
+        aSelectedIndices.forEach(iIndex => {
+          const oRowContext = oTable.getContextByIndex(iIndex);
+          if (!oRowContext) return;
+
+          const oItem = oRowContext.getObject();
+
+          // 🔴 Soft delete
+          oItem.isActive = false;
+
+          // 🔴 Track deleted item
+          aDeletedItems.push(oItem);
+
+          // 🔴 Remove from visible list
+          aItems.splice(iIndex, 1);
         });
 
-        aSelectedIndices.forEach(function (iIndex) {
-          var oContext = oTable.getContextByIndex(iIndex);
-          if (oContext) {
-            oModel.setProperty(oContext.getPath(), null);
-          }
-        });
+        // Update model
+        oContextModel.setProperty("/obsoleteItems", aItems);
+        oContextModel.setProperty("/deletedItems", aDeletedItems);
 
-        // Remove null entries safely
-        var aItems = oModel.getProperty("/obsoleteItems") || [];
-        aItems = aItems.filter(function (item) {
-          return item !== null;
-        });
-
-        oModel.setProperty("/obsoleteItems", aItems);
-        this.byId("obsoleteTable").clearSelection();
-
-        // oTable.clearSelection();
-
+        oTable.clearSelection();
         sap.m.MessageToast.show("Selected rows deleted.");
       },
-
-
-
 
       onUpdateComments: function () {
         var oTable = this.byId("obsoleteTable");
@@ -663,44 +775,117 @@ sap.ui.define(
         ];
       },
 
+      // onSave: async function () {
+
+
+      //   //Check whether task is already submitted or not
+      //   const oView = this.getView();
+      //   oView.setBusy(true);
+      //   try {
+      //     await this._checkTaskStatus();
+      //   } catch (sErrorMsg) {
+      //     oView.setBusy(false);
+      //     sap.m.MessageBox.warning(sErrorMsg);
+      //     return;
+      //   }
+      //   const context = this.getOwnerComponent().getModel("context").getData();
+
+      //   const oModel = this.getView().getModel("obsolete");
+
+      //   const sWorkflowId = context.workflowId;
+      //   const aItems = this.getView().getModel("context").getProperty("/obsoleteItems");
+
+      //   const oPayload = {
+      //     workflowId: sWorkflowId,
+      //     items: aItems
+
+      //   }
+
+      //   const result = await new Promise((resolve, reject) => {
+      //     const csrfToken = oModel.getSecurityToken();
+      //     const serviceUrl = oModel.sServiceUrl;
+
+      //     jQuery.ajax({
+      //       url: `${serviceUrl}/bulkUpdateWorkflowItems`,
+      //       method: "POST",
+      //       contentType: "application/json",
+      //       data: JSON.stringify({
+      //         workflowId: sWorkflowId,
+      //         items: aItems
+      //       }),
+      //       headers: {
+      //         "X-CSRF-Token": csrfToken
+      //       },
+      //       success: resolve,
+      //       error: reject
+      //     });
+      //   });
+
+
+      // },
+
       onSave: async function () {
 
-
-        //Check whether task is already submitted or not
         const oView = this.getView();
         oView.setBusy(true);
+
         try {
           await this._checkTaskStatus();
-        } catch (sErrorMsg) {
+
+          const context = this.getOwnerComponent()
+            .getModel("context")
+            .getData();
+          const oContextModel = this.getOwnerComponent()
+            .getModel("context");
+
+            
+          const sWorkflowId = context.workflowId;
+          const aItems = this.getView()
+            .getModel("context")
+            .getProperty("/obsoleteItems");
+
+          const aActiveItems = oContextModel.getProperty("/obsoleteItems") || [];
+          const aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
+
+          // 🔁 MERGE before save
+          const aFinalItems = aActiveItems.concat(aDeletedItems);
+
+          await this._callBulkUpdate(sWorkflowId, aFinalItems);
+
+          oContextModel.setProperty("/deletedItems", []);
+
+          sap.m.MessageBox.success("Saved successfully");
+
+        } catch (oError) {
+          sap.m.MessageBox.error(
+            typeof oError === "string" ? oError : "Save failed"
+          );
+          console.error(oError);
+        } finally {
           oView.setBusy(false);
-          sap.m.MessageBox.warning(sErrorMsg);
-          return;
         }
-        const context = this.getOwnerComponent().getModel("context").getData();
-
+      },
+      _callBulkUpdate: function (sWorkflowId, aItems) {
         const oModel = this.getView().getModel("obsolete");
+        const csrfToken = oModel.getSecurityToken();
+        const serviceUrl = oModel.sServiceUrl;
 
-        const sWorkflowId = context.workflowId;
-        const aItems = this.getView().getModel("context").getProperty("/obsoleteItems");
-
-        const oPayload = {
-          workflowId: sWorkflowId,
-          items: aItems
-
-        }
-
-
-        oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
-          success: function (oData) {
-            oView.setBusy(false);
-            sap.m.MessageBox.success("Saved successfully ");
-          },
-          error: function (oError) {
-            oView.setBusy(false);
-            sap.m.MessageBox.error("Failed to save");
-          }
+        return new Promise((resolve, reject) => {
+          jQuery.ajax({
+            url: `${serviceUrl}/bulkUpdateWorkflowItems`,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              workflowId: sWorkflowId,
+              items: aItems
+            }),
+            headers: {
+              "X-CSRF-Token": csrfToken
+            },
+            success: resolve,
+            error: reject
+          });
         });
-
       },
 
       _checkTaskStatus: function () {
