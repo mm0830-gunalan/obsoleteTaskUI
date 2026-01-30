@@ -313,7 +313,7 @@
 
                         <!-- Editable -->
                         <table:Column
-                            width="9rem"
+                            width="15rem"
                             visible="{context>/handlingVisible}"
                         >
                             <Label
@@ -343,7 +343,7 @@
                         </table:Column>
 
                         <table:Column
-                            width="9rem"
+                            width="15rem"
                             visible="{context>/componentVisible}"
                         >
                             <Label
