@@ -251,7 +251,7 @@ sap.ui.define(
 
 
       onApplyHandlingUpdate: function () {
-        const sCurrentUser = this.getView().getModel('user').getData().email;
+        // const sCurrentUser = this.getView().getModel('user').getData().email;
         var sSelectedHandling = sap.ui.getCore()
           .byId("massHandlingSelect")
           .getSelectedKey();
@@ -267,10 +267,10 @@ sap.ui.define(
             oContext.getPath() + "/handling",
             sSelectedHandling
           );
-          oContext.getModel().setProperty(
-            oContext.getPath() + `/modifiedBy`,
-            sCurrentUser
-          );
+          // oContext.getModel().setProperty(
+          //   oContext.getPath() + `/modifiedBy`,
+          //   sCurrentUser
+          // );
         });
         this.byId("obsoleteTable").clearSelection();
         this._oHandlingDialog.close();
@@ -318,7 +318,7 @@ sap.ui.define(
 
       onApplyScrapUpdate: function () {
 
-        const sCurrentUser = this.getView().getModel('user').getData().email;
+        // const sCurrentUser = this.getView().getModel('user').getData().email;
         var sSelectedHandling = sap.ui.getCore()
           .byId("massHandlingSelectScrap")
           .getSelectedKey();
@@ -334,10 +334,10 @@ sap.ui.define(
             oContext.getPath() + "/scrapDecision",
             sSelectedHandling
           );
-          oContext.getModel().setProperty(
-            oContext.getPath() + `/modifiedBy`,
-            sCurrentUser
-          );
+          // oContext.getModel().setProperty(
+          //   oContext.getPath() + `/modifiedBy`,
+          //   sCurrentUser
+          // );
         });
         this.byId("obsoleteTable").clearSelection();
         this._oScrapDialog.close();
@@ -380,7 +380,7 @@ sap.ui.define(
 
       onApplyCustomerUpdate: function () {
 
-        const sCurrentUser = this.getView().getModel('user').getData().email;
+        // const sCurrentUser = this.getView().getModel('user').getData().email;
         var sSelectedCustomer = sap.ui.getCore()
           .byId("massCustomerSelect")
           .getSelectedKey();
@@ -396,10 +396,10 @@ sap.ui.define(
             oContext.getPath() + "/customerResponse",
             sSelectedCustomer
           );
-          oContext.getModel().setProperty(
-            oContext.getPath() + `/modifiedBy`,
-            sCurrentUser
-          );
+          // oContext.getModel().setProperty(
+          //   oContext.getPath() + `/modifiedBy`,
+          //   sCurrentUser
+          // );
         });
         this.byId("obsoleteTable").clearSelection();
         this._oCustomerDialog.close();
@@ -664,7 +664,7 @@ sap.ui.define(
           sDynamicComment = "commentSubsidiary"
         }
 
-        const sCurrentUser = this.getView().getModel('user').getData().email;
+        // const sCurrentUser = this.getView().getModel('user').getData().email;
 
         var sComment = sap.ui.getCore().byId("bulkComments").getValue();
 
@@ -679,10 +679,10 @@ sap.ui.define(
             oContext.getPath() + `/${sDynamicComment}`,
             sComment
           );
-          oContext.getModel().setProperty(
-            oContext.getPath() + `/modifiedBy`,
-            sCurrentUser
-          );
+          // oContext.getModel().setProperty(
+          //   oContext.getPath() + `/modifiedBy`,
+          //   sCurrentUser
+          // );
         });
 
         this.byId("obsoleteTable").clearSelection();
@@ -691,7 +691,7 @@ sap.ui.define(
         sap.m.MessageToast.show("Comments updated for selected rows.");
       },
 
-      onChangeDropdown: function (oEvent) {
+      onChangeDropdown1: function (oEvent) {
 
         // 1️⃣ Get current user email
         const sCurrentUser = this.getView()
@@ -711,7 +711,7 @@ sap.ui.define(
 
       },
 
-      onChangeComment: function (oEvent) {
+      onChangeComment1: function (oEvent) {
 
         // 1. Get the current user
         const sCurrentUser = this.getView().getModel("user").getData().email;
@@ -850,7 +850,10 @@ sap.ui.define(
         oView.setBusy(true);
 
         try {
+          //Comment for testing
           await this._checkTaskStatus();
+
+          ///
 
           const context = this.getOwnerComponent()
             .getModel("context")
@@ -910,7 +913,9 @@ sap.ui.define(
 
       _checkTaskStatus: function () {
 
-        const sEmail = this.getView().getModel("user").getData().email;
+        // const sEmail = this.getView().getModel("user").getData().email;
+        let oUserInfo = sap.ushell.Container.getService("UserInfo");
+        const sEmail = oUserInfo.getEmail();
         return new Promise((resolve, reject) => {
 
           jQuery.ajax({
@@ -929,7 +934,8 @@ sap.ui.define(
               if (sStatus === "READY") {
                 resolve(true);
                 return;
-              } if (sStatus === "RESERVED" && sProcessor === sEmail) {
+              }
+              if (sStatus === "RESERVED" && sProcessor === sEmail) {
                 resolve(true);
                 return;
               }
@@ -937,7 +943,8 @@ sap.ui.define(
               if (sStatus === "RESERVED" && sProcessor && sProcessor !== sEmail) {
                 reject(`Task is already RESERVED by ${sProcessor}. Please refresh.`);
                 return;
-              } //  Completed
+              } 
+              //  Completed
               if (sStatus === "COMPLETED") {
                 reject("Task is already COMPLETED. Please refresh.");
                 return;

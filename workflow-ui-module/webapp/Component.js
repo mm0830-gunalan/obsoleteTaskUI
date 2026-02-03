@@ -197,8 +197,8 @@ sap.ui.define(
 
         _checkTaskStatus: function () {
 
-          const sEmail = this.getModel("context")
-            .getProperty("/User/email");
+          let oUserInfo = sap.ushell.Container.getService("UserInfo");
+          const sEmail = oUserInfo.getEmail();
 
           return new Promise((resolve, reject) => {
 

@@ -4,12 +4,12 @@
 
     <Dialog
         id="customerDialog"
-        title="Update Handling"
+        title="Update Customer Response"
         draggable="true"
         resizable="true">
 
         <VBox class="sapUiSmallMargin">
-            <Label text="Handling" />
+            <Label text="Customer Response" />
             <Select
                 id="massCustomerSelect"
                 width="100%">
