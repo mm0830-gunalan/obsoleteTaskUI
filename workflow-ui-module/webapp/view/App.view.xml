@@ -75,6 +75,7 @@
                                 icon="sap-icon://filter"
                                 press="onOpenFilterDialog"
                                 tooltip="Filter"
+                                visible="false"
                             />
 
                             <!-- <Button
@@ -86,6 +87,7 @@
                                 icon="sap-icon://excel-attachment"
                                 tooltip="Export to Excel"
                                 press="onExportObsoleteItems"
+                                visible="false"
                             />
                             <Button
                                 text="Delete"

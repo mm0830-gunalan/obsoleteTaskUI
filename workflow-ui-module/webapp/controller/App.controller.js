@@ -157,7 +157,7 @@ sap.ui.define(
       onSearch: function (oEvent) {
         var sValue = oEvent.getParameter("newValue");
         var oTable = this.byId("obsoleteTable");
-        var oBinding = oTable.getBinding("rows"); // ✅ rows, not items
+        var oBinding = oTable.getBinding("rows"); //  rows, not items
 
         if (!oBinding) {
           return;
@@ -170,8 +170,22 @@ sap.ui.define(
             new sap.ui.model.Filter({
               filters: [
                 new sap.ui.model.Filter("rfqId", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("plant", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("component", sap.ui.model.FilterOperator.Contains, sValue),
+
+                new sap.ui.model.Filter("description", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("manufacturerPart", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("availableStock", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("availableCu", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("rangeCoverage", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("pn", sap.ui.model.FilterOperator.Contains, sValue),
                 new sap.ui.model.Filter("customer", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.Contains, sValue)
+                new sap.ui.model.Filter("endCustomer", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("reason", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("totalAmount", sap.ui.model.FilterOperator.Contains, sValue),
+                new sap.ui.model.Filter("weight", sap.ui.model.FilterOperator.Contains, sValue)
+
               ],
               and: false // OR condition
             })
@@ -943,7 +957,7 @@ sap.ui.define(
               if (sStatus === "RESERVED" && sProcessor && sProcessor !== sEmail) {
                 reject(`Task is already RESERVED by ${sProcessor}. Please refresh.`);
                 return;
-              } 
+              }
               //  Completed
               if (sStatus === "COMPLETED") {
                 reject("Task is already COMPLETED. Please refresh.");
