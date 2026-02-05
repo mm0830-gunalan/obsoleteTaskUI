@@ -17,610 +17,533 @@
             class="sapUiContentPadding"
         >
             <content>
-                <VBox class="sapUiSmallMargin">
-                    <f:Form editable="false">
-                        <f:layout>
-                            <f:ResponsiveGridLayout
-                                singleContainerFullSize="false"
+                <FlexBox
+                    direction="Column"
+                    height="100%"
+                    fitContainer="true"
+                >
+                    <VBox class="sapUiSmallMargin">
+                        <layoutData>
+                            <FlexItemData
+                                growFactor="0"
+                                shrinkFactor="0"
                             />
-                        </f:layout>
-                        <f:formContainers>
-                            <f:FormContainer>
-                                <f:formElements>
-                                    <f:FormElement label="Company Code">
-                                        <f:fields>
-                                            <Text
-                                                text="{context>/companyCode}"
-                                            />
-                                        </f:fields>
-                                    </f:FormElement>
-                                </f:formElements>
-                            </f:FormContainer>
-                        </f:formContainers>
-                    </f:Form>
-                </VBox>
+                        </layoutData>
+                        <f:Form editable="false">
+                            <f:layout>
+                                <f:ResponsiveGridLayout
+                                    singleContainerFullSize="false"
+                                />
+                            </f:layout>
+                            <f:formContainers>
+                                <f:FormContainer>
+                                    <f:formElements>
+                                        <f:FormElement label="Company Code">
+                                            <f:fields>
+                                                <Text
+                                                    text="{context>/companyCode}"
+                                                />
+                                            </f:fields>
+                                        </f:FormElement>
+                                    </f:formElements>
+                                </f:FormContainer>
+                            </f:formContainers>
+                        </f:Form>
+                    </VBox>
 
-                <!-- <HBox
-                    alignItems="Center"
-                    width="100%"
-                >
-                    <Label
-                        text="Company Code"
-                        width="10rem"
-                    />
-                    <Input
-                        value="{context>/companyCode}"
-                        editable="false"
-                        width="15rem"
-                    />
-                </HBox> -->
+                    <table:Table
+                        id="obsoleteTable"
+                        rows="{context>/obsoleteItems}"
+                        selectionMode="MultiToggle"
+                        visibleRowCountMode="Auto"
+                    >
+                        <table:layoutData>
+                            <FlexItemData
+                                growFactor="1"
+                                shrinkFactor="1"
+                                baseSize="0%"
+                            />
+                        </table:layoutData>
+                        <table:extension>
+                            <OverflowToolbar style="Clear">
+                                <Title id="title" />
+                                <ToolbarSpacer />
+                                <!-- SEARCH / FILTER -->
+                                <SearchField
+                                    visible="true"
+                                    placeholder="Search..."
+                                    liveChange="onSearch"
+                                    width="15rem"
+                                />
+                                <Button
+                                    icon="sap-icon://filter"
+                                    press="onOpenFilterDialog"
+                                    tooltip="Filter"
+                                    visible="false"
+                                />
+                                <Button
+                                    icon="sap-icon://excel-attachment"
+                                    tooltip="Export to Excel"
+                                    press="onExportObsoleteItems"
+                                    visible="false"
+                                />
+                                <Button
+                                    text="Delete"
+                                    type="Reject"
+                                    icon="sap-icon://delete"
+                                    press="onDeleteSelected"
+                                />
 
-                <table:Table
-                    id="obsoleteTable"
-                    rows="{context>/obsoleteItems}"
-                    selectionMode="MultiToggle"
-                >
-                    <table:extension>
-                        <OverflowToolbar style="Clear">
-                            <Title id="title" />
-                            <ToolbarSpacer />
-                            <!-- SEARCH / FILTER -->
-                            <SearchField
-                                visible="true"
-                                placeholder="Search..."
-                                liveChange="onSearch"
+                                <Button
+                                    icon="sap-icon://clear-filter"
+                                    tooltip="Clear all filters"
+                                    press="onClearAllFilters"
+                                />
+
+                                <!--  EXTRA CUSTOM BUTTON -->
+                                <Button
+                                    text="Update Handling"
+                                    type="Emphasized"
+                                    press="onUpdateHandling"
+                                    visible="{context>/handlingEditable}"
+                                />
+                                <Button
+                                    text="Update Scrap Decision"
+                                    type="Emphasized"
+                                    press="onUpdateScrap"
+                                    visible="{context>/scrapEditable}"
+                                />
+                                <Button
+                                    text="Update Customer Response"
+                                    type="Emphasized"
+                                    press="onUpdateCustomer"
+                                    visible="{context>/componentVisible}"
+                                />
+                                <Button
+                                    text="Update Comments"
+                                    type="Emphasized"
+                                    press="onUpdateComments"
+                                    visible="{context>/commentsVisible}"
+                                />
+                                <Button
+                                    type="Accept"
+                                    text="Save"
+                                    press=".onSave"
+                                />
+                            </OverflowToolbar>
+                        </table:extension>
+                        <table:columns>
+                            <table:Column
+                                width="10rem"
+                                sortProperty="rfqId"
+                                filterProperty="rfqId"
+                            >
+                                <Label text="RFQ ID" />
+                                <table:template>
+                                    <Text text="{context>rfqId}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="5rem"
+                                sortProperty="plant"
+                                filterProperty="plant"
+                            >
+                                <Label text="Plant" />
+                                <table:template>
+                                    <Text text="{context>plant}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
                                 width="15rem"
-                            />
-                            <Button
-                                icon="sap-icon://filter"
-                                press="onOpenFilterDialog"
-                                tooltip="Filter"
-                                visible="false"
-                            />
+                                sortProperty="component"
+                                filterProperty="component"
+                            >
+                                <Label text="Component" />
+                                <table:template>
+                                    <Text text="{context>component}" />
+                                </table:template>
+                            </table:Column>
 
-                            <!-- <Button
-                        icon="sap-icon://sort"
-                        press="onOpenSortDialog"
-                        tooltip="Sort"
-                    /> -->
-                            <Button
-                                icon="sap-icon://excel-attachment"
-                                tooltip="Export to Excel"
-                                press="onExportObsoleteItems"
-                                visible="false"
-                            />
-                            <Button
-                                text="Delete"
-                                type="Reject"
-                                icon="sap-icon://delete"
-                                press="onDeleteSelected"
-                            />
+                            <table:Column
+                                width="15rem"
+                                sortProperty="description"
+                                filterProperty="description"
+                            >
+                                <Label text="Description" />
+                                <table:template>
+                                    <Text
+                                        text="{context>description}"
+                                        wrapping="false"
+                                    />
+                                </table:template>
+                            </table:Column>
 
-                            <!--  EXTRA CUSTOM BUTTON -->
-                            <Button
-                                text="Update Handling"
-                                type="Emphasized"
-                                press="onUpdateHandling"
-                                visible="{context>/handlingEditable}"
-                            />
-                            <Button
-                                text="Update Scrap Decision"
-                                type="Emphasized"
-                                press="onUpdateScrap"
-                                visible="{context>/scrapEditable}"
-                            />
-                            <Button
-                                text="Update Customer Response"
-                                type="Emphasized"
-                                press="onUpdateCustomer"
+                            <table:Column
+                                width="10rem"
+                                sortProperty="manufacturerPart"
+                                filterProperty="manufacturerPart"
+                            >
+                                <Label text="Manufacture Part" />
+                                <table:template>
+                                    <Text text="{context>manufacturerPart}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="8rem"
+                                sortProperty="availableStock"
+                                filterProperty="availableStock"
+                            >
+                                <Label text="Available Stock" />
+                                <table:template>
+                                    <Text text="{context>availableStock}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="8rem"
+                                sortProperty="availableCu"
+                                filterProperty="availableCu"
+                            >
+                                <Label text="Available CU" />
+                                <table:template>
+                                    <Text text="{context>availableCu}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column width="6rem">
+                                <Label text="Last Consumption" />
+                                <table:template>
+                                    <Text
+                                        text="{path: 'context>lastConsumption', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'}}"
+                                    />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="5rem"
+                                sortProperty="rangeCoverage"
+                                filterProperty="rangeCoverage"
+                            >
+                                <Label text="Range Coverage" />
+                                <table:template>
+                                    <Text text="{context>rangeCoverage}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="10rem"
+                                sortProperty="pn"
+                                filterProperty="pn"
+                            >
+                                <Label text="PN" />
+                                <table:template>
+                                    <Text text="{context>pn}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="10rem"
+                                sortProperty="customer"
+                                filterProperty="customer"
+                            >
+                                <Label text="Customer" />
+                                <table:template>
+                                    <Text text="{context>customer}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="10rem"
+                                sortProperty="endCustomer"
+                                filterProperty="endCustomer"
+                            >
+                                <Label text="End Customer" />
+                                <table:template>
+                                    <Text text="{context>endCustomer}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="6rem"
+                                sortProperty="reason"
+                                filterProperty="reason"
+                            >
+                                <Label text="Reason" />
+                                <table:template>
+                                    <Text text="{context>reason}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="7rem"
+                                sortProperty="caused"
+                                filterProperty="caused"
+                            >
+                                <Label text="Caused" />
+                                <table:template>
+                                    <Text text="{context>caused}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="4rem"
+                                sortProperty="totalAmount"
+                                filterProperty="totalAmount"
+                            >
+                                <Label text="Total Amount" />
+                                <table:template>
+                                    <Text text="{context>totalAmount}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="4rem"
+                                sortProperty="weight"
+                                filterProperty="weight"
+                            >
+                                <Label text="Weight" />
+                                <table:template>
+                                    <Text text="{context>weight}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="9rem"
+                                sortProperty="decisionFlow"
+                                filterProperty="decisionFlow"
+                                visible="{context>/decisionFlowVisible}"
+                            >
+                                <Label text="Decision Flow" />
+                                <table:template>
+                                    <Text text="{context>decisionFlow}" />
+                                </table:template>
+                            </table:Column>
+
+                            <!-- Editable -->
+                            <table:Column
+                                width="15rem"
+                                visible="{context>/handlingVisible}"
+                            >
+                                <Label
+                                    text="Handling"
+                                    required="{context>/handlingRequired}"
+                                />
+                                <table:template>
+                                        <Select
+                                            selectedKey="{context>handling}"
+                                            editable="{context>/handlingEditable}"
+                                            change=".onChangeDropdown"
+                                        >
+                                            <core:Item
+                                                key=""
+                                                text="-----Select-----"
+                                            />
+                                            <core:Item
+                                                key="Scrapping"
+                                                text="Scrapping"
+                                            />
+                                            <core:Item
+                                                key="Alternative use"
+                                                text="Alternative use"
+                                            />
+                                        </Select>
+         
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="15rem"
                                 visible="{context>/componentVisible}"
-                            />
-                            <Button
-                                text="Update Comments"
-                                type="Emphasized"
-                                press="onUpdateComments"
-                                visible="{context>/commentsVisible}"
-                            />
-                        </OverflowToolbar>
-                    </table:extension>
-                    <table:columns>
-                        <table:Column
-                            width="10rem"
-                            sortProperty="rfqId"
-                            filterProperty="rfqId"
-                        >
-                            <Label text="RFQ ID" />
-                            <table:template>
-                                <Text text="{context>rfqId}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="5rem"
-                            sortProperty="plant"
-                            filterProperty="plant"
-                        >
-                            <Label text="Plant" />
-                            <table:template>
-                                <Text text="{context>plant}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="15rem"
-                            sortProperty="component"
-                            filterProperty="component"
-                        >
-                            <Label text="Component" />
-                            <table:template>
-                                <Text text="{context>component}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="15rem"
-                            sortProperty="description"
-                            filterProperty="description"
-                        >
-                            <Label text="Description" />
-                            <table:template>
-                                <Text
-                                    text="{context>description}"
-                                    wrapping="false"
+                            >
+                                <Label
+                                    text="Customer Response"
+                                    required="{context>/componentVisible}"
                                 />
-                            </table:template>
-                        </table:Column>
+                                <table:template>
+                                        <Select
+                                            selectedKey="{context>customerResponse}"
+                                            editable="{context>/componentVisible}"
+                                            change=".onChangeDropdown"
+                                        >
+                                            <core:Item
+                                                key=""
+                                                text="-----Select-----"
+                                            />
+                                            <core:Item
+                                                key="Customer doesn't pay"
+                                                text="Customer doesn't pay"
+                                            />
+                                            <core:Item
+                                                key="Customer pays"
+                                                text="Customer pays"
+                                            />
+                                            <core:Item
+                                                key="Customer purchase obsolete stock"
+                                                text="Customer purchase obsolete stock"
+                                            />
+                                        </Select>
+                                </table:template>
+                            </table:Column>
 
-                        <table:Column
-                            width="10rem"
-                            sortProperty="manufacturerPart"
-                            filterProperty="manufacturerPart"
-                        >
-                            <Label text="Manufacture Part" />
-                            <table:template>
-                                <Text text="{context>manufacturerPart}" />
-                            </table:template>
-                        </table:Column>
+                            <table:Column
+                                width="4rem"
+                                visible="{context>/alternativeVisible}"
+                            >
+                                <Label text="Internal Use" />
+                                <table:template>
+                                    <CheckBox
+                                        selected="{context>internalUse}"
+                                    />
+                                </table:template>
+                            </table:Column>
 
-                        <table:Column
-                            width="5rem"
-                            sortProperty="availableStock"
-                            filterProperty="availableStock"
-                        >
-                            <Label text="Available Stock" />
-                            <table:template>
-                                <Text text="{context>availableStock}" />
-                            </table:template>
-                        </table:Column>
+                            <table:Column
+                                width="4rem"
+                                visible="{context>/subsidiaryVisible}"
+                            >
+                                <Label text="Sell to subsidiary" />
+                                <table:template>
+                                    <CheckBox
+                                        selected="{context>sellToSubsidiary}"
+                                    />
+                                </table:template>
+                            </table:Column>
 
-                        <table:Column
-                            width="5rem"
-                            sortProperty="availableCu"
-                            filterProperty="availableCu"
-                        >
-                            <Label text="Available CU" />
-                            <table:template>
-                                <Text text="{context>availableCu}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column width="6rem">
-                            <Label text="Last Consumption" />
-                            <table:template>
-                                <Text
-                                    text="{path: 'context>lastConsumption', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'}}"
+                            <table:Column
+                                width="15rem"
+                                visible="{context>/scrapVisible}"
+                            >
+                                <Label
+                                    text="Scrapping"
+                                    required="{context>/scrapRequired}"
                                 />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="5rem"
-                            sortProperty="rangeCoverage"
-                            filterProperty="rangeCoverage"
-                        >
-                            <Label text="Range Coverage" />
-                            <table:template>
-                                <Text text="{context>rangeCoverage}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="4rem"
-                            sortProperty="pn"
-                            filterProperty="pn"
-                        >
-                            <Label text="PN" />
-                            <table:template>
-                                <Text text="{context>pn}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="10rem"
-                            sortProperty="customer"
-                            filterProperty="customer"
-                        >
-                            <Label text="Customer" />
-                            <table:template>
-                                <Text text="{context>customer}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="10rem"
-                            sortProperty="endCustomer"
-                            filterProperty="endCustomer"
-                        >
-                            <Label text="End Customer" />
-                            <table:template>
-                                <Text text="{context>endCustomer}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="3rem"
-                            sortProperty="reason"
-                            filterProperty="reason"
-                        >
-                            <Label text="Reason" />
-                            <table:template>
-                                <Text text="{context>reason}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="7rem"
-                            sortProperty="caused"
-                            filterProperty="caused"
-                        >
-                            <Label text="Caused" />
-                            <table:template>
-                                <Text text="{context>caused}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="4rem"
-                            sortProperty="totalAmount"
-                            filterProperty="totalAmount"
-                        >
-                            <Label text="Total Amount" />
-                            <table:template>
-                                <Text text="{context>totalAmount}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="4rem"
-                            sortProperty="weight"
-                            filterProperty="weight"
-                        >
-                            <Label text="Weight" />
-                            <table:template>
-                                <Text text="{context>weight}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="9rem"
-                            sortProperty="decisionFlow"
-                            filterProperty="decisionFlow"
-                            visible="{context>/decisionFlowVisible}"
-                        >
-                            <Label text="Decision Flow" />
-                            <table:template>
-                                <Text text="{context>decisionFlow}" />
-                            </table:template>
-                        </table:Column>
-
-                        <!-- Editable -->
-                        <table:Column
-                            width="15rem"
-                            visible="{context>/handlingVisible}"
-                        >
-                            <Label
-                                text="Handling"
-                                required="{context>/handlingRequired}"
-                            />
-                            <table:template>
-                                <Select
-                                    selectedKey="{context>handling}"
-                                    editable="{context>/handlingEditable}"
-                                    change=".onChangeDropdown"
-                                >
-                                    <core:Item
-                                        key=""
-                                        text="-----Select-----"
-                                    />
-                                    <core:Item
-                                        key="Scrapping"
-                                        text="Scrapping"
-                                    />
-                                    <core:Item
-                                        key="Alternative use"
-                                        text="Alternative use"
-                                    />
-                                </Select>
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="15rem"
-                            visible="{context>/componentVisible}"
-                        >
-                            <Label
-                                text="Customer Response"
-                                required="{context>/componentVisible}"
-                            />
-                            <table:template>
-                                <Select
-                                    selectedKey="{context>customerResponse}"
-                                    editable="{context>/componentVisible}"
-                                    change=".onChangeDropdown"
-                                >
-                                    <core:Item
-                                        key=""
-                                        text="-----Select-----"
-                                    />
-                                    <core:Item
-                                        key="Customer doesn't pay"
-                                        text="Customer doesn't pay"
-                                    />
-                                    <core:Item
-                                        key="Customer pays"
-                                        text="Customer pays"
-                                    />
-                                    <core:Item
-                                        key="Customer purchase obsolete stock"
-                                        text="Customer purchase obsolete stock"
-                                    />
-                                </Select>
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="4rem"
-                            visible="{context>/alternativeVisible}"
-                        >
-                            <Label text="Internal Use" />
-                            <table:template>
-                                <CheckBox selected="{context>internalUse}" />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="4rem"
-                            visible="{context>/subsidiaryVisible}"
-                        >
-                            <Label text="Sell to subsidiary" />
-                            <table:template>
-                                <CheckBox
-                                    selected="{context>sellToSubsidiary}"
-                                />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="9rem"
-                            visible="{context>/scrapVisible}"
-                        >
-                            <Label
-                                text="Scrapping"
-                                required="{context>/scrapRequired}"
-                            />
-                            <table:template>
-                                <Select
-                                    selectedKey="{context>scrapDecision}"
-                                    editable="{context>/scrapEditable}"
-                                    change=".onChangeDropdown"
-                                >
-                                    <core:Item
-                                        key=""
-                                        text="-----Select-----"
-                                    />
-                                    <core:Item
-                                        key="To be scrapped"
-                                        text="To be scrapped"
-                                    />
-                                    <core:Item
-                                        key="Keep"
-                                        text="Keep"
-                                    />
-                                </Select>
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="12rem"
-                            visible="{context>/handlingRequired}"
-                        >
-                            <Label text="Comments" />
-                            <table:template>
-                                <TextArea
-                                    value="{context>commentHandling}"
-                                    rows="1"
-                                    change=".onChangeComment"
-                                />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="12rem"
-                            visible="{context>/scrapRequired}"
-                        >
-                            <Label text="Comments" />
-                            <table:template>
-                                <TextArea
-                                    value="{context>commentScrap}"
-                                    rows="1"
-                                    change=".onChangeComment"
-                                />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="12rem"
-                            visible="{context>/alternativeVisible}"
-                        >
-                            <Label text="Comments" />
-                            <table:template>
-                                <TextArea
-                                    value="{context>commentAlternative}"
-                                    rows="1"
-                                    change=".onChangeComment"
-                                />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="12rem"
-                            visible="{context>/subsidiaryVisible}"
-                        >
-                            <Label text="Comments" />
-                            <table:template>
-                                <TextArea
-                                    value="{context>commentSubsidiary}"
-                                    rows="1"
-                                    change=".onChangeComment"
-                                />
-                            </table:template>
-                        </table:Column>
-
-                        <table:Column
-                            width="12rem"
-                            visible="{context>/componentVisible}"
-                        >
-                            <Label text="Comments" />
-                            <table:template>
-                                <TextArea
-                                    value="{context>commentComponent}"
-                                    rows="1"
-                                    change=".onChangeComment"
-                                />
-                            </table:template>
-                        </table:Column>
-                    </table:columns>
-                    <table:footer>
-                        <Button
-                            text="Save"
-                            press=".onSave"
-                        />
-                    </table:footer>
-                </table:Table>
-
-                <!-- <Table
-                    id="obsoleteTable"
-                    items="{context>/obsoleteItems}"
-                    inset="false"
-                    growing="true"
-                    growingScrollToLoad="true"
-                    mode="MultiSelect"
-                    width="100%"
-                    fixedLayout="false"
-                >
-                    <columns>
-                        <Column>
-                            <Text text="RFQ ID" />
-                        </Column>
-                        <Column>
-                            <Text text="Plant" />
-                        </Column>
-                        <Column>
-                            <Text text="Component" />
-                        </Column>
-                        <Column>
-                            <Text text="Description" />
-                        </Column>
-                        <Column>
-                            <Text text="Manufacture Part" />
-                        </Column>
-                        <Column>
-                            <Text text="Available Stock" />
-                        </Column>
-                        <Column>
-                            <Text text="Available Cu" />
-                        </Column>
-                        <Column>
-                            <Text text="Last Consumption" />
-                        </Column>
-                        <Column>
-                            <Text text="Coverage" />
-                        </Column>
-                        <Column>
-                            <Text text="PN" />
-                        </Column>
-                        <Column>
-                            <Text text="Customer" />
-                        </Column>
-                        <Column>
-                            <Text text="End Customer" />
-                        </Column>
-                        <Column>
-                            <Text text="Reason" />
-                        </Column>
-                        <Column>
-                            <Text text="Caused" />
-                        </Column>
-                        <Column>
-                            <Text text="TotalAmount" />
-                        </Column>
-                        <Column>
-                            <Text text="Weight" />
-                        </Column>
-                        <Column>
-                            <Text text="Decision Flow" />
-                        </Column>
-                        <Column width="7rem">
-                            <Text text="Handling" />
-                        </Column>
-                        <Column width="7rem">
-                            <Text text="Comments" />
-                        </Column>
-                    </columns>
-
-                    <items>
-                        <ColumnListItem>
-                            <cells>
-                                <Text text="{context>rfqId}" />
-                                <Text text="{context>plant}" />
-                                <Text text="{context>component}" />
-                                <Text text="{context>description}" />
-                                <Text text="{context>manufacturePart}" />
-
-                                <Text text="{context>availableStock}" />
-                                <Text text="{context>availableCu}" />
-                                <Text text="{context>lastConsumption}" />
-                                <Text text="{context>coverage}" />
-                                <Text text="{context>pn}" />
-
-                                <Text text="{context>customer}" />
-                                <Text text="{context>endCustomer}" />
-                                <Text text="{context>reason}" />
-                                <Text text="{context>caused}" />
-                                <Text text="{context>totalamount}" />
-                                <Text text="{context>weight}" />
-                                <Text text="{context>decisionFlow}" />
-
-                                <Select
-                                    selectedKey="{context>handling}"
-                                    required="true"
-                                >
-                                    <items>
+                                <table:template>
+                                    <Select
+                                        selectedKey="{context>scrapDecision}"
+                                        editable="{context>/scrapEditable}"
+                                        change=".onChangeDropdown"
+                                        width="100%"
+                                    >
                                         <core:Item
-                                            key="Scrapping"
-                                            text="Scrapping"
+                                            key=""
+                                            text="-----Select-----"
                                         />
                                         <core:Item
-                                            key="Alternative use"
-                                            text="Alternative use"
+                                            key="To be scrapped"
+                                            text="To be scrapped"
                                         />
-                                    </items>
-                                </Select>
-                                <TextArea value="{context>comments}" />
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table> -->
+                                        <core:Item
+                                            key="Keep"
+                                            text="Keep"
+                                        />
+                                    </Select>
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="18rem"
+                                visible="{context>/handlingRequired}"
+                            >
+                                <Label text="Comments" />
+                                <table:template>
+                                    <TextArea
+                                        width="100%"
+                                        value="{context>commentHandling}"
+                                        rows="1"
+                                        change=".onChangeComment"
+                                    />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="18rem"
+                                visible="{context>/scrapRequired}"
+                            >
+                                <Label text="Comments" />
+                                <table:template>
+                                    <TextArea
+                                        width="100%"
+                                        value="{context>commentScrap}"
+                                        rows="1"
+                                        change=".onChangeComment"
+                                    />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="18rem"
+                                visible="{context>/alternativeVisible}"
+                            >
+                                <Label text="Comments" />
+                                <table:template>
+                                    <TextArea
+                                        width="100%"
+                                        value="{context>commentAlternative}"
+                                        rows="1"
+                                        change=".onChangeComment"
+                                    />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="18rem"
+                                visible="{context>/subsidiaryVisible}"
+                            >
+                                <Label text="Comments" />
+                                <table:template>
+                                    <TextArea
+                                        width="100%"
+                                        value="{context>commentSubsidiary}"
+                                        rows="1"
+                                        change=".onChangeComment"
+                                    />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="18rem"
+                                visible="{context>/componentVisible}"
+                            >
+                                <Label text="Comments" />
+                                <table:template>
+                                    <TextArea
+                                        width="100%"
+                                        value="{context>commentComponent}"
+                                        rows="1"
+                                        change=".onChangeComment"
+                                    />
+                                </table:template>
+                            </table:Column>
+                        </table:columns>
+                        <!-- <table:footer>
+                            <OverflowToolbar id="otbFooter">
+                                <ToolbarSpacer />
+                                <Button
+                                    type="Accept"
+                                    text="Save"
+                                    press=".onSave"
+                                >
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData
+                                            priority="NeverOverflow"
+                                        />
+                                    </layoutData>
+                                </Button>
+                            </OverflowToolbar>
+                        </table:footer> -->
+                    </table:Table>
+                    <VBox height="60px">
+                        <layoutData>
+                            <FlexItemData
+                                growFactor="0"
+                                shrinkFactor="0"
+                            />
+                        </layoutData>
+                    </VBox>
+                </FlexBox>
             </content>
         </Page>
     </App>

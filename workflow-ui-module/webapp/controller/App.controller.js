@@ -154,48 +154,96 @@ sap.ui.define(
 
 
 
+      // onSearch: function (oEvent) {
+      //   var sValue = oEvent.getParameter("newValue");
+      //   var oTable = this.byId("obsoleteTable");
+      //   var oBinding = oTable.getBinding("rows"); //  rows, not items
+
+      //   if (!oBinding) {
+      //     return;
+      //   }
+
+      //   var aFilters = [];
+
+      //   if (sValue) {
+      //     aFilters.push(
+      //       new sap.ui.model.Filter({
+      //         filters: [
+      //           new sap.ui.model.Filter("rfqId", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("plant", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("component", sap.ui.model.FilterOperator.Contains, sValue),
+
+      //           new sap.ui.model.Filter("description", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("manufacturerPart", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("availableStock", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("availableCu", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("rangeCoverage", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("pn", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("customer", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("endCustomer", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("reason", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("totalAmount", sap.ui.model.FilterOperator.Contains, sValue),
+      //           new sap.ui.model.Filter("weight", sap.ui.model.FilterOperator.Contains, sValue)
+
+      //         ],
+      //         and: false // OR condition
+      //       })
+      //     );
+      //   }
+
+      //   oBinding.filter(aFilters);
+      // },
+
       onSearch: function (oEvent) {
-        var sValue = oEvent.getParameter("newValue");
-        var oTable = this.byId("obsoleteTable");
-        var oBinding = oTable.getBinding("rows"); //  rows, not items
+        const sValue = (oEvent.getParameter("newValue") || "").toLowerCase();
+        const oTable = this.byId("obsoleteTable");
+        const oBinding = oTable.getBinding("rows");
 
         if (!oBinding) {
           return;
         }
 
-        var aFilters = [];
-
-        if (sValue) {
-          aFilters.push(
-            new sap.ui.model.Filter({
-              filters: [
-                new sap.ui.model.Filter("rfqId", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("plant", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("component", sap.ui.model.FilterOperator.Contains, sValue),
-
-                new sap.ui.model.Filter("description", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("manufacturerPart", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("availableStock", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("availableCu", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("rangeCoverage", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("pn", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("customer", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("endCustomer", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("reason", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("totalAmount", sap.ui.model.FilterOperator.Contains, sValue),
-                new sap.ui.model.Filter("weight", sap.ui.model.FilterOperator.Contains, sValue)
-
-              ],
-              and: false // OR condition
-            })
-          );
+        // Clear global search
+        if (!sValue) {
+          oBinding.filter([], sap.ui.model.FilterType.Application);
+          return;
         }
 
-        oBinding.filter(aFilters);
+        const aSearchFields = [
+          "rfqId",
+          "plant",
+          "component",
+          "description",
+          "manufacturerPart",
+          "availableStock",
+          "availableCu",
+          "rangeCoverage",
+          "pn",
+          "customer",
+          "endCustomer",
+          "reason",
+          "caused",
+          "totalAmount",
+          "weight",
+          "decisionFlow"
+        ];
+
+        const aFilters = aSearchFields.map(function (sField) {
+          return new sap.ui.model.Filter(sField, function (vValue) {
+            return vValue !== null &&
+              vValue !== undefined &&
+              vValue.toString().toLowerCase().includes(sValue);
+          });
+        });
+
+        const oGlobalFilter = new sap.ui.model.Filter({
+          filters: aFilters,
+          and: false // OR condition
+        });
+
+        oBinding.filter(oGlobalFilter, sap.ui.model.FilterType.Application);
       },
-
-
       onOpenSortDialog: function () {
         if (!this._oSortDialog) {
           this._oSortDialog = new sap.m.ViewSettingsDialog({
@@ -210,12 +258,38 @@ sap.ui.define(
 
         this._oSortDialog.open();
       },
+      onClearAllFilters: function () {
+        const oTable = this.byId("obsoleteTable");
+        const oBinding = oTable.getBinding("rows");
+
+        if (!oBinding) {
+          return;
+        }
+
+        oBinding.sort(null);
+        // 1️⃣ Clear global (application) filters
+        oBinding.filter([], sap.ui.model.FilterType.Application);
+
+        // 2️⃣ Clear column filters
+        oTable.getColumns().forEach(function (oColumn) {
+          oColumn.setFiltered(false);
+          oColumn.setFilterValue("");
+          oColumn.setSorted(false);
+          oColumn.setSortOrder(sap.ui.table.SortOrder.None);
+        });
+
+        // 3️⃣ Clear SearchField
+        const oSearchField = this.byId("searchField");
+        if (oSearchField) {
+          oSearchField.setValue("");
+        }
+      },
       onSortConfirm: function (oEvent) {
         var sKey = oEvent.getParameter("sortItem").getKey();
         var bDesc = oEvent.getParameter("sortDescending");
 
         var oTable = this.byId("obsoleteTable");
-        var oBinding = oTable.getBinding("rows"); // ✅ rows, not items
+        var oBinding = oTable.getBinding("rows"); //  rows, not items
 
         if (!oBinding) {
           return;
@@ -550,46 +624,52 @@ sap.ui.define(
       },
 
 
-      // onDeleteSelected: function () {
-      //   var oTable = this.byId("obsoleteTable");
-      //   var oModel = this.getView().getModel("context");
 
-      //   var aSelectedIndices = oTable.getSelectedIndices();
+
+      // onDeleteSelected: function () {
+
+      //   const oTable = this.byId("obsoleteTable");
+      //   const oContextModel = this.getView().getModel("context");
+
+      //   const aSelectedIndices = oTable.getSelectedIndices();
 
       //   if (!aSelectedIndices.length) {
       //     sap.m.MessageToast.show("Please select at least one row to delete.");
       //     return;
       //   }
 
-      //   // Sort descending to avoid index shift
-      //   aSelectedIndices.sort(function (a, b) {
-      //     return b - a;
+      //   let aItems = oContextModel.getProperty("/obsoleteItems") || [];
+      //   let aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
+
+      //   // Sort DESC to avoid index shift
+      //   aSelectedIndices.sort((a, b) => b - a);
+
+      //   aSelectedIndices.forEach(iIndex => {
+      //     const oRowContext = oTable.getContextByIndex(iIndex);
+      //     if (!oRowContext) return;
+
+      //     const oItem = oRowContext.getObject();
+
+      //     // 🔴 Soft delete
+      //     oItem.isActive = false;
+
+      //     // 🔴 Track deleted item
+      //     aDeletedItems.push(oItem);
+
+      //     // 🔴 Remove from visible list
+      //     aItems.splice(iIndex, 1);
       //   });
 
-      //   aSelectedIndices.forEach(function (iIndex) {
-      //     var oContext = oTable.getContextByIndex(iIndex);
-      //     if (oContext) {
-      //       oModel.setProperty(oContext.getPath(), null);
-      //     }
-      //   });
+      //   // Update model
+      //   oContextModel.setProperty("/obsoleteItems", aItems);
+      //   oContextModel.setProperty("/deletedItems", aDeletedItems);
 
-      //   // Remove null entries safely
-      //   var aItems = oModel.getProperty("/obsoleteItems") || [];
-      //   aItems = aItems.filter(function (item) {
-      //     return item !== null;
-      //   });
-
-      //   oModel.setProperty("/obsoleteItems", aItems);
-      //   this.byId("obsoleteTable").clearSelection();
-
-      //   // oTable.clearSelection();
-
+      //   oTable.clearSelection();
       //   sap.m.MessageToast.show("Selected rows deleted.");
       // },
 
 
       onDeleteSelected: function () {
-
         const oTable = this.byId("obsoleteTable");
         const oContextModel = this.getView().getModel("context");
 
@@ -600,34 +680,56 @@ sap.ui.define(
           return;
         }
 
-        let aItems = oContextModel.getProperty("/obsoleteItems") || [];
-        let aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
+        const iCount = aSelectedIndices.length;
 
-        // Sort DESC to avoid index shift
-        aSelectedIndices.sort((a, b) => b - a);
+        sap.m.MessageBox.confirm(
+          `Are you sure you want to delete ${iCount} selected item(s)?`,
+          {
+            icon: sap.m.MessageBox.Icon.WARNING,
+            title: "Confirm Deletion",
+            actions: [
+              sap.m.MessageBox.Action.OK,
+              sap.m.MessageBox.Action.CANCEL
+            ],
+            emphasizedAction: sap.m.MessageBox.Action.OK,
+            onClose: function (sAction) {
+              if (sAction !== sap.m.MessageBox.Action.OK) {
+                return;
+              }
 
-        aSelectedIndices.forEach(iIndex => {
-          const oRowContext = oTable.getContextByIndex(iIndex);
-          if (!oRowContext) return;
+              //  DELETE LOGIC STARTS HERE
+              let aItems = oContextModel.getProperty("/obsoleteItems") || [];
+              let aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
 
-          const oItem = oRowContext.getObject();
+              // Sort DESC to avoid index shift
+              aSelectedIndices.sort((a, b) => b - a);
 
-          // 🔴 Soft delete
-          oItem.isActive = false;
+              aSelectedIndices.forEach(iIndex => {
+                const oRowContext = oTable.getContextByIndex(iIndex);
+                if (!oRowContext) return;
 
-          // 🔴 Track deleted item
-          aDeletedItems.push(oItem);
+                const oItem = oRowContext.getObject();
 
-          // 🔴 Remove from visible list
-          aItems.splice(iIndex, 1);
-        });
+                //  Soft delete
+                oItem.isActive = false;
 
-        // Update model
-        oContextModel.setProperty("/obsoleteItems", aItems);
-        oContextModel.setProperty("/deletedItems", aDeletedItems);
+                //  Track deleted item
+                aDeletedItems.push(oItem);
 
-        oTable.clearSelection();
-        sap.m.MessageToast.show("Selected rows deleted.");
+                //  Remove from visible list
+                aItems.splice(iIndex, 1);
+              });
+
+              // Update model
+              oContextModel.setProperty("/obsoleteItems", aItems);
+              oContextModel.setProperty("/deletedItems", aDeletedItems);
+
+              oTable.clearSelection();
+              sap.m.MessageToast.show("Selected rows deleted.");
+              // 🔼 DELETE LOGIC ENDS HERE
+            }
+          }
+        );
       },
 
       onUpdateComments: function () {
@@ -1044,6 +1146,10 @@ sap.ui.define(
         });
         return fetchedToken;
       },
+
+
+
+
 
 
     });
