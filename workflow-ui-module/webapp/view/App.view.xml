@@ -56,6 +56,7 @@
                         rows="{context>/obsoleteItems}"
                         selectionMode="MultiToggle"
                         visibleRowCountMode="Auto"
+                        fixedColumnCount="3"
                     >
                         <table:layoutData>
                             <FlexItemData
@@ -134,17 +135,6 @@
                         </table:extension>
                         <table:columns>
                             <table:Column
-                                width="10rem"
-                                sortProperty="rfqId"
-                                filterProperty="rfqId"
-                            >
-                                <Label text="RFQ ID" />
-                                <table:template>
-                                    <Text text="{context>rfqId}" />
-                                </table:template>
-                            </table:Column>
-
-                            <table:Column
                                 width="5rem"
                                 sortProperty="plant"
                                 filterProperty="plant"
@@ -167,7 +157,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="15rem"
+                                width="17rem"
                                 sortProperty="description"
                                 filterProperty="description"
                             >
@@ -181,7 +171,18 @@
                             </table:Column>
 
                             <table:Column
-                                width="10rem"
+                                width="12rem"
+                                sortProperty="rfqId"
+                                filterProperty="rfqId"
+                            >
+                                <Label text="RFQ ID" />
+                                <table:template>
+                                    <Text text="{context>rfqId}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="13rem"
                                 sortProperty="manufacturerPart"
                                 filterProperty="manufacturerPart"
                             >
@@ -223,7 +224,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="5rem"
+                                width="8rem"
                                 sortProperty="rangeCoverage"
                                 filterProperty="rangeCoverage"
                             >
@@ -267,7 +268,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="6rem"
+                                width="8rem"
                                 sortProperty="reason"
                                 filterProperty="reason"
                             >
@@ -289,7 +290,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="4rem"
+                                width="8rem"
                                 sortProperty="totalAmount"
                                 filterProperty="totalAmount"
                             >
@@ -300,7 +301,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="4rem"
+                                width="8rem"
                                 sortProperty="weight"
                                 filterProperty="weight"
                             >
@@ -311,7 +312,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="9rem"
+                                width="10rem"
                                 sortProperty="decisionFlow"
                                 filterProperty="decisionFlow"
                                 visible="{context>/decisionFlowVisible}"
@@ -332,25 +333,25 @@
                                     required="{context>/handlingRequired}"
                                 />
                                 <table:template>
-                                        <Select
-                                            selectedKey="{context>handling}"
-                                            editable="{context>/handlingEditable}"
-                                            change=".onChangeDropdown"
-                                        >
-                                            <core:Item
-                                                key=""
-                                                text="-----Select-----"
-                                            />
-                                            <core:Item
-                                                key="Scrapping"
-                                                text="Scrapping"
-                                            />
-                                            <core:Item
-                                                key="Alternative use"
-                                                text="Alternative use"
-                                            />
-                                        </Select>
-         
+                                    <Select
+                                        selectedKey="{context>handling}"
+                                        editable="{context>/handlingEditable}"
+                                        change=".onChangeDropdown"
+                                        width="100%"
+                                    >
+                                        <core:Item
+                                            key=""
+                                            text="-----Select-----"
+                                        />
+                                        <core:Item
+                                            key="Scrapping"
+                                            text="Scrapping"
+                                        />
+                                        <core:Item
+                                            key="Alternative use"
+                                            text="Alternative use"
+                                        />
+                                    </Select>
                                 </table:template>
                             </table:Column>
 
@@ -363,33 +364,33 @@
                                     required="{context>/componentVisible}"
                                 />
                                 <table:template>
-                                        <Select
-                                            selectedKey="{context>customerResponse}"
-                                            editable="{context>/componentVisible}"
-                                            change=".onChangeDropdown"
-                                        >
-                                            <core:Item
-                                                key=""
-                                                text="-----Select-----"
-                                            />
-                                            <core:Item
-                                                key="Customer doesn't pay"
-                                                text="Customer doesn't pay"
-                                            />
-                                            <core:Item
-                                                key="Customer pays"
-                                                text="Customer pays"
-                                            />
-                                            <core:Item
-                                                key="Customer purchase obsolete stock"
-                                                text="Customer purchase obsolete stock"
-                                            />
-                                        </Select>
+                                    <Select
+                                        selectedKey="{context>customerResponse}"
+                                        editable="{context>/componentVisible}"
+                                        change=".onChangeDropdown"
+                                    >
+                                        <core:Item
+                                            key=""
+                                            text="-----Select-----"
+                                        />
+                                        <core:Item
+                                            key="Customer doesn't pay"
+                                            text="Customer doesn't pay"
+                                        />
+                                        <core:Item
+                                            key="Customer pays"
+                                            text="Customer pays"
+                                        />
+                                        <core:Item
+                                            key="Customer purchase obsolete stock"
+                                            text="Customer purchase obsolete stock"
+                                        />
+                                    </Select>
                                 </table:template>
                             </table:Column>
 
                             <table:Column
-                                width="4rem"
+                                width="10rem"
                                 visible="{context>/alternativeVisible}"
                             >
                                 <Label text="Internal Use" />
@@ -401,7 +402,7 @@
                             </table:Column>
 
                             <table:Column
-                                width="4rem"
+                                width="10rem"
                                 visible="{context>/subsidiaryVisible}"
                             >
                                 <Label text="Sell to subsidiary" />
