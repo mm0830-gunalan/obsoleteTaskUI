@@ -266,11 +266,13 @@ sap.ui.define(
           return;
         }
 
-        oBinding.sort(null);
-        // 1️⃣ Clear global (application) filters
-        oBinding.filter([], sap.ui.model.FilterType.Application);
+        // 1️⃣ Clear all filters (both types)
+        oBinding.filter([]);
 
-        // 2️⃣ Clear column filters
+        // 2️⃣ Clear sorting
+        oBinding.sort([]);
+
+        // 3️⃣ Reset column states
         oTable.getColumns().forEach(function (oColumn) {
           oColumn.setFiltered(false);
           oColumn.setFilterValue("");
@@ -278,11 +280,14 @@ sap.ui.define(
           oColumn.setSortOrder(sap.ui.table.SortOrder.None);
         });
 
-        // 3️⃣ Clear SearchField
+        // 4️⃣ Clear SearchField
         const oSearchField = this.byId("searchField");
         if (oSearchField) {
           oSearchField.setValue("");
         }
+
+        // 5️⃣ Force refresh
+        oBinding.refresh();
       },
       onSortConfirm: function (oEvent) {
         var sKey = oEvent.getParameter("sortItem").getKey();
