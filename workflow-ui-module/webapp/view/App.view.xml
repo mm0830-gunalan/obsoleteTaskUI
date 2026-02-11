@@ -222,13 +222,20 @@
                             </table:Column>
 
                             <table:Column
-                                width="8rem"
+                                width="14rem"
                                 sortProperty="availableCu"
                                 filterProperty="availableCu"
                             >
-                                <Label text="Available CU" />
+                                <Label text="Free stock full copper" />
                                 <table:template>
                                     <Text text="{context>availableCu}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column width="5rem">
+                                <Label text="Currency" />
+                                <table:template>
+                                    <Text text="{context>currency}" />
                                 </table:template>
                             </table:Column>
 
