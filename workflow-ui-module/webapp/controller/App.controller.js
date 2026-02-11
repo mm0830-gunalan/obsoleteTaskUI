@@ -308,9 +308,39 @@ sap.ui.define(
       },
 
 
+      // onUpdateHandling: function () {
+      //   var oTable = this.byId("obsoleteTable");
+      //   var aSelectedIndices = oTable.getSelectedIndices();
+
+      //   if (!aSelectedIndices.length) {
+      //     sap.m.MessageToast.show("Please select at least one row");
+      //     return;
+      //   }
+
+      //   this._aSelectedContexts = [];
+
+      //   aSelectedIndices.forEach(function (iIndex) {
+      //     var oContext = oTable.getContextByIndex(iIndex);
+      //     if (oContext) {
+      //       this._aSelectedContexts.push(oContext);
+      //     }
+      //   }.bind(this));
+
+      //   if (!this._oHandlingDialog) {
+      //     this._oHandlingDialog = sap.ui.xmlfragment(
+      //       "obsoletetaskform.workflowuimodule.view.fragment.HandlingUpdate",
+      //       this
+      //     );
+      //     this.getView().addDependent(this._oHandlingDialog);
+      //   }
+
+      //   sap.ui.getCore().byId("massHandlingSelect").setSelectedKey("");
+      //   this._oHandlingDialog.open();
+      // },
+
       onUpdateHandling: function () {
-        var oTable = this.byId("obsoleteTable");
-        var aSelectedIndices = oTable.getSelectedIndices();
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
 
         if (!aSelectedIndices.length) {
           sap.m.MessageToast.show("Please select at least one row");
@@ -319,13 +349,14 @@ sap.ui.define(
 
         this._aSelectedContexts = [];
 
-        aSelectedIndices.forEach(function (iIndex) {
-          var oContext = oTable.getContextByIndex(iIndex);
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
           if (oContext) {
             this._aSelectedContexts.push(oContext);
           }
-        }.bind(this));
+        });
 
+        // Create dialog if not already created
         if (!this._oHandlingDialog) {
           this._oHandlingDialog = sap.ui.xmlfragment(
             "obsoletetaskform.workflowuimodule.view.fragment.HandlingUpdate",
@@ -334,7 +365,14 @@ sap.ui.define(
           this.getView().addDependent(this._oHandlingDialog);
         }
 
-        sap.ui.getCore().byId("massHandlingSelect").setSelectedKey("");
+        // Create/reset dialog model
+        const oDialogModel = new sap.ui.model.json.JSONModel({
+          handling: "",
+          commentHandling: ""
+        });
+
+        this._oHandlingDialog.setModel(oDialogModel, "handling");
+
         this._oHandlingDialog.open();
       },
 
@@ -344,27 +382,28 @@ sap.ui.define(
 
 
       onApplyHandlingUpdate: function () {
-        // const sCurrentUser = this.getView().getModel('user').getData().email;
-        var sSelectedHandling = sap.ui.getCore()
-          .byId("massHandlingSelect")
-          .getSelectedKey();
+        var oDialogModel = this._oHandlingDialog.getModel("handling");
+
+        const sSelectedHandling = oDialogModel.getProperty("/handling");
+        const sComment = oDialogModel.getProperty("/commentHandling");
 
         if (!sSelectedHandling) {
           sap.m.MessageToast.show("Please select Handling value");
           return;
         }
 
-        // ✅ Loop over selected binding contexts
         this._aSelectedContexts.forEach((oContext) => {
           oContext.getModel().setProperty(
             oContext.getPath() + "/handling",
             sSelectedHandling
           );
-          // oContext.getModel().setProperty(
-          //   oContext.getPath() + `/modifiedBy`,
-          //   sCurrentUser
-          // );
+
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/commentHandling",
+            sComment
+          );
         });
+
         this.byId("obsoleteTable").clearSelection();
         this._oHandlingDialog.close();
         sap.m.MessageToast.show("Handling updated successfully");
@@ -374,9 +413,39 @@ sap.ui.define(
 
       //For updating the Scrapping
 
+      // onUpdateScrap: function () {
+      //   var oTable = this.byId("obsoleteTable");
+      //   var aSelectedIndices = oTable.getSelectedIndices();
+
+      //   if (!aSelectedIndices.length) {
+      //     sap.m.MessageToast.show("Please select at least one row");
+      //     return;
+      //   }
+
+      //   this._aSelectedContexts = [];
+
+      //   aSelectedIndices.forEach(function (iIndex) {
+      //     var oContext = oTable.getContextByIndex(iIndex);
+      //     if (oContext) {
+      //       this._aSelectedContexts.push(oContext);
+      //     }
+      //   }.bind(this));
+
+      //   if (!this._oScrapDialog) {
+      //     this._oScrapDialog = sap.ui.xmlfragment(
+      //       "obsoletetaskform.workflowuimodule.view.fragment.ScrapUpdate",
+      //       this
+      //     );
+      //     this.getView().addDependent(this._oScrapDialog);
+      //   }
+
+      //   sap.ui.getCore().byId("massHandlingSelectScrap").setSelectedKey("");
+      //   this._oScrapDialog.open();
+      // },
+
       onUpdateScrap: function () {
-        var oTable = this.byId("obsoleteTable");
-        var aSelectedIndices = oTable.getSelectedIndices();
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
 
         if (!aSelectedIndices.length) {
           sap.m.MessageToast.show("Please select at least one row");
@@ -385,12 +454,12 @@ sap.ui.define(
 
         this._aSelectedContexts = [];
 
-        aSelectedIndices.forEach(function (iIndex) {
-          var oContext = oTable.getContextByIndex(iIndex);
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
           if (oContext) {
             this._aSelectedContexts.push(oContext);
           }
-        }.bind(this));
+        });
 
         if (!this._oScrapDialog) {
           this._oScrapDialog = sap.ui.xmlfragment(
@@ -400,47 +469,105 @@ sap.ui.define(
           this.getView().addDependent(this._oScrapDialog);
         }
 
-        sap.ui.getCore().byId("massHandlingSelectScrap").setSelectedKey("");
+        // Create/reset dialog model
+        const oDialogModel = new sap.ui.model.json.JSONModel({
+          scrapDecision: "",
+          commentScrap: ""
+        });
+
+        this._oScrapDialog.setModel(oDialogModel, "scrap");
         this._oScrapDialog.open();
       },
-
       onCancelScrapDialog: function () {
         this._oScrapDialog.close();
       },
 
 
+      // onApplyScrapUpdate: function () {
+
+      //   // const sCurrentUser = this.getView().getModel('user').getData().email;
+      //   var sSelectedHandling = sap.ui.getCore()
+      //     .byId("massHandlingSelectScrap")
+      //     .getSelectedKey();
+
+      //   if (!sSelectedHandling) {
+      //     sap.m.MessageToast.show("Please select Scrapping value");
+      //     return;
+      //   }
+
+      //   //  Loop over selected binding contexts
+      //   this._aSelectedContexts.forEach((oContext) => {
+      //     oContext.getModel().setProperty(
+      //       oContext.getPath() + "/scrapDecision",
+      //       sSelectedHandling
+      //     );
+
+      //   });
+      //   this.byId("obsoleteTable").clearSelection();
+      //   this._oScrapDialog.close();
+      //   sap.m.MessageToast.show("Scrapping updated successfully");
+      // },
+
+
+      // onUpdateCustomer: function () {
+      //   var oTable = this.byId("obsoleteTable");
+      //   var aSelectedIndices = oTable.getSelectedIndices();
+
+      //   if (!aSelectedIndices.length) {
+      //     sap.m.MessageToast.show("Please select at least one row");
+      //     return;
+      //   }
+
+      //   this._aSelectedContextsCustomer = [];
+
+      //   aSelectedIndices.forEach(function (iIndex) {
+      //     var oContext = oTable.getContextByIndex(iIndex);
+      //     if (oContext) {
+      //       this._aSelectedContextsCustomer.push(oContext);
+      //     }
+      //   }.bind(this));
+
+      //   if (!this._oCustomerDialog) {
+      //     this._oCustomerDialog = sap.ui.xmlfragment(
+      //       "obsoletetaskform.workflowuimodule.view.fragment.CustomerUpdate",
+      //       this
+      //     );
+      //     this.getView().addDependent(this._oCustomerDialog);
+      //   }
+
+      //   sap.ui.getCore().byId("massCustomerSelect").setSelectedKey("");
+      //   this._oCustomerDialog.open();
+      // },
+
       onApplyScrapUpdate: function () {
+        const oDialogModel = this._oScrapDialog.getModel("scrap");
+        const sSelectedScrap = oDialogModel.getProperty("/scrapDecision");
+        const sComment = oDialogModel.getProperty("/commentScrap");
 
-        // const sCurrentUser = this.getView().getModel('user').getData().email;
-        var sSelectedHandling = sap.ui.getCore()
-          .byId("massHandlingSelectScrap")
-          .getSelectedKey();
-
-        if (!sSelectedHandling) {
+        if (!sSelectedScrap) {
           sap.m.MessageToast.show("Please select Scrapping value");
           return;
         }
 
-        // ✅ Loop over selected binding contexts
         this._aSelectedContexts.forEach((oContext) => {
           oContext.getModel().setProperty(
             oContext.getPath() + "/scrapDecision",
-            sSelectedHandling
+            sSelectedScrap
           );
-          // oContext.getModel().setProperty(
-          //   oContext.getPath() + `/modifiedBy`,
-          //   sCurrentUser
-          // );
+
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/commentScrap",
+            sComment
+          );
         });
+
         this.byId("obsoleteTable").clearSelection();
         this._oScrapDialog.close();
         sap.m.MessageToast.show("Scrapping updated successfully");
       },
-
-
       onUpdateCustomer: function () {
-        var oTable = this.byId("obsoleteTable");
-        var aSelectedIndices = oTable.getSelectedIndices();
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
 
         if (!aSelectedIndices.length) {
           sap.m.MessageToast.show("Please select at least one row");
@@ -449,12 +576,12 @@ sap.ui.define(
 
         this._aSelectedContextsCustomer = [];
 
-        aSelectedIndices.forEach(function (iIndex) {
-          var oContext = oTable.getContextByIndex(iIndex);
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
           if (oContext) {
             this._aSelectedContextsCustomer.push(oContext);
           }
-        }.bind(this));
+        });
 
         if (!this._oCustomerDialog) {
           this._oCustomerDialog = sap.ui.xmlfragment(
@@ -464,42 +591,73 @@ sap.ui.define(
           this.getView().addDependent(this._oCustomerDialog);
         }
 
-        sap.ui.getCore().byId("massCustomerSelect").setSelectedKey("");
+        // Dialog model with comment field
+        const oDialogModel = new sap.ui.model.json.JSONModel({
+          customerResponse: "",
+          commentCustomer: ""
+        });
+
+        this._oCustomerDialog.setModel(oDialogModel, "customer");
         this._oCustomerDialog.open();
       },
       onCancelCustomerDialog: function () {
         this._oCustomerDialog.close();
       },
 
+      // onApplyCustomerUpdate: function () {
+
+      //   // const sCurrentUser = this.getView().getModel('user').getData().email;
+      //   var sSelectedCustomer = sap.ui.getCore()
+      //     .byId("massCustomerSelect")
+      //     .getSelectedKey();
+
+      //   if (!sSelectedCustomer) {
+      //     sap.m.MessageToast.show("Please select Customer response value");
+      //     return;
+      //   }
+
+      //   // ✅ Loop over selected binding contexts
+      //   this._aSelectedContextsCustomer.forEach((oContext) => {
+      //     oContext.getModel().setProperty(
+      //       oContext.getPath() + "/customerResponse",
+      //       sSelectedCustomer
+      //     );
+      //     oContext.getModel().setProperty(
+      //       oContext.getPath() + `/commentComponent`,
+      //       sCurrentUser
+      //     );
+      //   });
+      //   this.byId("obsoleteTable").clearSelection();
+      //   this._oCustomerDialog.close();
+      //   sap.m.MessageToast.show("Customer response updated successfully");
+      // },
+
       onApplyCustomerUpdate: function () {
+        const oDialogModel = this._oCustomerDialog.getModel("customer");
+        const sCustomerResponse = oDialogModel.getProperty("/customerResponse");
+        const sComment = oDialogModel.getProperty("/commentCustomer");
 
-        // const sCurrentUser = this.getView().getModel('user').getData().email;
-        var sSelectedCustomer = sap.ui.getCore()
-          .byId("massCustomerSelect")
-          .getSelectedKey();
-
-        if (!sSelectedCustomer) {
-          sap.m.MessageToast.show("Please select Customer response value");
+        if (!sCustomerResponse) {
+          sap.m.MessageToast.show("Please select Customer Response");
           return;
         }
 
-        // ✅ Loop over selected binding contexts
         this._aSelectedContextsCustomer.forEach((oContext) => {
           oContext.getModel().setProperty(
             oContext.getPath() + "/customerResponse",
-            sSelectedCustomer
+            sCustomerResponse
           );
-          // oContext.getModel().setProperty(
-          //   oContext.getPath() + `/modifiedBy`,
-          //   sCurrentUser
-          // );
+
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/commentComponent",
+            sComment
+          );
         });
+
         this.byId("obsoleteTable").clearSelection();
         this._oCustomerDialog.close();
         sap.m.MessageToast.show("Customer response updated successfully");
       },
-
-
       onOpenFilterDialog: function () {
         const oModel = this.getView().getModel("context");
         const aItems = oModel.getProperty("/obsoleteItems");
@@ -1152,7 +1310,136 @@ sap.ui.define(
         return fetchedToken;
       },
 
+      //Addtional two more comment
 
+      onUpdateInternal: function () {
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
+
+        if (!aSelectedIndices.length) {
+          sap.m.MessageToast.show("Please select at least one row");
+          return;
+        }
+
+        this._aSelectedContextsInternal = [];
+
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
+          if (oContext) {
+            this._aSelectedContextsInternal.push(oContext);
+          }
+        });
+
+        if (!this._oInternalDialog) {
+          this._oInternalDialog = sap.ui.xmlfragment(
+            "obsoletetaskform.workflowuimodule.view.fragment.InternalUpdate",
+            this
+          );
+          this.getView().addDependent(this._oInternalDialog);
+        }
+
+        // Dialog model with comment field
+        const oDialogModel = new sap.ui.model.json.JSONModel({
+          internalUse: false,
+          commentAlternative: ""
+        });
+
+        this._oInternalDialog.setModel(oDialogModel, "internal");
+        this._oInternalDialog.open();
+      },
+      onCancelInternalDialog: function () {
+        this._oInternalDialog.close();
+      },
+
+
+
+      onApplyInternalUpdate: function () {
+        const oDialogModel = this._oInternalDialog.getModel("internal");
+        const bInternalUse = oDialogModel.getProperty("/internalUse");
+        const sComment = oDialogModel.getProperty("/commentAlternative");
+
+        this._aSelectedContextsInternal.forEach((oContext) => {
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/internalUse",
+            bInternalUse
+          );
+
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/commentAlternative",
+            sComment
+          );
+        });
+
+        this.byId("obsoleteTable").clearSelection();
+        this._oInternalDialog.close();
+        sap.m.MessageToast.show("Internal use updated successfully");
+      },
+
+
+
+
+      onUpdateSubsidiary: function () {
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
+
+        if (!aSelectedIndices.length) {
+          sap.m.MessageToast.show("Please select at least one row");
+          return;
+        }
+
+        this._aSelectedContextsSubsidiary = [];
+
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
+          if (oContext) {
+            this._aSelectedContextsSubsidiary.push(oContext);
+          }
+        });
+
+        if (!this._oSubsidiaryDialog) {
+          this._oSubsidiaryDialog = sap.ui.xmlfragment(
+            "obsoletetaskform.workflowuimodule.view.fragment.SubsidiaryUpdate",
+            this
+          );
+          this.getView().addDependent(this._oSubsidiaryDialog);
+        }
+
+        // Dialog model with comment field
+        const oDialogModel = new sap.ui.model.json.JSONModel({
+          subsidiary: false,
+          commentSubsidiary: ""
+        });
+
+        this._oSubsidiaryDialog.setModel(oDialogModel, "subsidiary");
+        this._oSubsidiaryDialog.open();
+      },
+      onCancelSubsidiaryDialog: function () {
+        this._oSubsidiaryDialog.close();
+      },
+
+
+
+      onApplySubsidiaryUpdate: function () {
+        const oDialogModel = this._oSubsidiaryDialog.getModel("subsidiary");
+        const bSubsidiary = oDialogModel.getProperty("/subsidiary");
+        const sComment = oDialogModel.getProperty("/commentSubsidiary");
+
+        this._aSelectedContextsSubsidiary.forEach((oContext) => {
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/sellToSubsidiary",
+            bSubsidiary
+          );
+
+          oContext.getModel().setProperty(
+            oContext.getPath() + "/commentSubsidiary",
+            sComment
+          );
+        });
+
+        this.byId("obsoleteTable").clearSelection();
+        this._oSubsidiaryDialog.close();
+        sap.m.MessageToast.show("Subsidiary updated successfully");
+      },
 
 
 

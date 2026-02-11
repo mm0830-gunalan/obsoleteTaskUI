@@ -120,12 +120,29 @@
                                     press="onUpdateCustomer"
                                     visible="{context>/componentVisible}"
                                 />
+
+                                <!-- Adding two more button for comment -->
+
                                 <Button
+                                    text="Update Internal Use"
+                                    type="Emphasized"
+                                    press="onUpdateInternal"
+                                    visible="{context>/alternativeVisible}"
+                                />
+
+                                <Button
+                                    text="Update Subsidiary"
+                                    type="Emphasized"
+                                    press="onUpdateSubsidiary"
+                                    visible="{context>/subsidiaryVisible}"
+                                />
+
+                                <!-- <Button
                                     text="Update Comments"
                                     type="Emphasized"
                                     press="onUpdateComments"
-                                    visible="{context>/commentsVisible}"
-                                />
+                                    visible="{= ${context>/subsidiaryVisible} || ${context>/alternativeVisible} }"
+                                /> -->
                                 <Button
                                     type="Accept"
                                     text="Save"

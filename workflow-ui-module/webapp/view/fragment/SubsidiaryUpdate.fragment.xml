@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="subsidiarylDialog"
+        title="Update Subsidiary"
+        draggable="true"
+        resizable="true"
+    >
+        <VBox class="sapUiSmallMargin">
+            <Label text="Sell to other subsidiary" />
+
+            <CheckBox selected="{subsidiary>/subsidiary}" />
+
+            <!-- Comment field -->
+            <Label
+                text="Comment"
+                class="sapUiSmallMarginTop"
+            />
+            <TextArea
+                value="{subsidiary>/commentSubsidiary}"
+                width="100%"
+                rows="4"
+                placeholder="Enter comment..."
+            />
+        </VBox>
+
+        <buttons>
+            <Button
+                text="Cancel"
+                press="onCancelSubsidiaryDialog"
+            />
+
+            <Button
+                text="Apply"
+                type="Emphasized"
+                press="onApplySubsidiaryUpdate"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

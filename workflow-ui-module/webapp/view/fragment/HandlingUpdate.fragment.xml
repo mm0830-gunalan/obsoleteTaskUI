@@ -1,35 +1,56 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core">
-
+    xmlns:core="sap.ui.core"
+>
     <Dialog
         id="handlingDialog"
         title="Update Handling"
         draggable="true"
-        resizable="true">
-
+        resizable="true"
+    >
         <VBox class="sapUiSmallMargin">
             <Label text="Handling" />
             <Select
                 id="massHandlingSelect"
-                width="100%">
+                width="100%"
+                selectedKey="{handling>/handling}"
+                forceSelection="false"
+            >
                 <items>
-                    <core:Item key="Scrapping" text="Scrapping" />
-                    <core:Item key="Alternative use" text="Alternative use" />
+                    <core:Item
+                        key="Scrapping"
+                        text="Scrapping"
+                    />
+                    <core:Item
+                        key="Alternative use"
+                        text="Alternative use"
+                    />
                 </items>
             </Select>
+            <Label
+                text="Comment"
+                class="sapUiSmallMarginTop"
+            />
+            <TextArea
+                id="massHandlingComment"
+                width="100%"
+                rows="4"
+                placeholder="Enter comment..."
+                value="{handling>/commentHandling}"
+            />
         </VBox>
 
         <buttons>
             <Button
                 text="Cancel"
-                press="onCancelHandlingDialog" />
+                press="onCancelHandlingDialog"
+            />
 
             <Button
                 text="Apply"
                 type="Emphasized"
-                press="onApplyHandlingUpdate" />
+                press="onApplyHandlingUpdate"
+            />
         </buttons>
-
     </Dialog>
 </core:FragmentDefinition>

@@ -1,35 +1,56 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core">
-
+    xmlns:core="sap.ui.core"
+>
     <Dialog
         id="scrapDialog"
         title="Update Scrapping"
         draggable="true"
-        resizable="true">
-
+        resizable="true"
+    >
         <VBox class="sapUiSmallMargin">
             <Label text="Scrapping" />
             <Select
-                id="massHandlingSelectScrap"
-                width="100%">
+                width="100%"
+                selectedKey="{scrap>/scrapDecision}"
+                forceSelection="false"
+            >
                 <items>
-                    <core:Item key="To be scrapped" text="To be scrapped" />
-                    <core:Item key="Keep" text="Keep" />
+                    <core:Item
+                        key="To be scrapped"
+                        text="To be scrapped"
+                    />
+                    <core:Item
+                        key="Keep"
+                        text="Keep"
+                    />
                 </items>
             </Select>
+
+            <!-- Comment field -->
+            <Label
+                text="Comment"
+                class="sapUiSmallMarginTop"
+            />
+            <TextArea
+                value="{scrap>/commentScrap}"
+                width="100%"
+                rows="4"
+                placeholder="Enter comment..."
+            />
         </VBox>
 
         <buttons>
             <Button
                 text="Cancel"
-                press="onCancelScrapDialog" />
+                press="onCancelScrapDialog"
+            />
 
             <Button
                 text="Apply"
                 type="Emphasized"
-                press="onApplyScrapUpdate" />
+                press="onApplyScrapUpdate"
+            />
         </buttons>
-
     </Dialog>
 </core:FragmentDefinition>
