@@ -2,9 +2,12 @@ sap.ui.define(
   [
     "sap/ui/core/mvc/Controller",
     "sap/ui/export/Spreadsheet",
-    "sap/ui/export/library"
+    "sap/ui/export/library",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageBox",
+    "sap/m/MessageToast"
   ],
-  function (BaseController, Spreadsheet, exportLibrary) {
+  function (BaseController, Spreadsheet, exportLibrary, JSONModel, MessageBox, MessageToast) {
     "use strict";
 
     return BaseController.extend("obsoletetaskform.workflowuimodule.controller.App", {
@@ -1441,6 +1444,148 @@ sap.ui.define(
         sap.m.MessageToast.show("Subsidiary updated successfully");
       },
 
+
+      //Old commens
+      /**
+        * Event handler for "Show All Comments" button
+        * Opens a dialog showing comment history for all selected rows in a table format
+        */
+      onShowAllComments: function () {
+        const oTable = this.byId("obsoleteTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
+
+        if (!aSelectedIndices.length) {
+          sap.m.MessageToast.show("Please select at least one row");
+          return;
+        }
+
+        const aComments = [];
+
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
+          if (oContext) {
+            aComments.push(oContext.getObject());
+          }
+        });
+
+        if (!this._oCommentsDialog) {
+          this._oCommentsDialog = sap.ui.xmlfragment(
+            "obsoletetaskform.workflowuimodule.view.fragment.CommentHistoryDialog",
+            this
+          );
+          this.getView().addDependent(this._oCommentsDialog);
+        }
+
+        const oCommentsModel = new sap.ui.model.json.JSONModel({
+          items: aComments
+        });
+
+        this._oCommentsDialog.setModel(oCommentsModel, "comments");
+        this._oCommentsDialog.open();
+      },
+
+
+      /**
+       * Build stage history for a single item
+       * @param {object} oItem - Item to process
+       * @returns {array} - Array of stage records
+       * @private
+       */
+      _buildStageHistory: function (oItem) {
+        var aStages = [];
+
+        // Stage 1: Handling Decision
+        if (oItem.handling || oItem.commentHandling) {
+          aStages.push({
+            plant: oItem.plant,
+            component: oItem.component,
+            stage: "1. Handling Decision",
+            stageState: "Information",
+            action: oItem.handling || "",
+            actionState: oItem.handling === "Scrapping" ? "Error" : "Success",
+            comment: oItem.commentHandling || "",
+            isCheckbox: false,
+            checkboxValue: false,
+            checkboxLabel: ""
+          });
+        }
+
+        // Stage 2: Scrapping Decision
+        if (oItem.scrapDecision || oItem.commentScrap) {
+          aStages.push({
+            plant: oItem.plant,
+            component: oItem.component,
+            stage: "2. Scrapping Decision",
+            stageState: "Information",
+            action: oItem.scrapDecision || "",
+            actionState: oItem.scrapDecision === "To be scrapped" ? "Error" : "Success",
+            comment: oItem.commentScrap || "",
+            isCheckbox: false,
+            checkboxValue: false,
+            checkboxLabel: ""
+          });
+        }
+
+        // Stage 3: Internal Use
+        if (oItem.internalUse === true || oItem.commentAlternative) {
+          aStages.push({
+            plant: oItem.plant,
+            component: oItem.component,
+            stage: "3. Internal Use",
+            stageState: "Information",
+            action: "",
+            actionState: "None",
+            comment: oItem.commentAlternative || "",
+            isCheckbox: true,
+            checkboxValue: oItem.internalUse || false,
+            checkboxLabel: oItem.internalUse ? "Selected" : "Not Selected"
+          });
+        }
+
+        // Stage 4: Sell to Subsidiary
+        if (oItem.sellToSubsidiary === true || oItem.commentSubsidiary) {
+          aStages.push({
+            plant: oItem.plant,
+            component: oItem.component,
+            stage: "4. Sell to Subsidiary",
+            stageState: "Information",
+            action: "",
+            actionState: "None",
+            comment: oItem.commentSubsidiary || "",
+            isCheckbox: true,
+            checkboxValue: oItem.sellToSubsidiary || false,
+            checkboxLabel: oItem.sellToSubsidiary ? "Selected" : "Not Selected"
+          });
+        }
+
+        // Stage 5: Customer Response
+        if (oItem.customerResponse || oItem.commentComponent) {
+          aStages.push({
+            plant: oItem.plant,
+            component: oItem.component,
+            stage: "5. Customer Response",
+            stageState: "Information",
+            action: oItem.customerResponse || "",
+            actionState: oItem.customerResponse === "Customer pays" ? "Success" : "Warning",
+            comment: oItem.commentComponent || "",
+            isCheckbox: false,
+            checkboxValue: false,
+            checkboxLabel: ""
+          });
+        }
+
+        return aStages;
+      },
+
+
+      /**
+       * Event handler for closing the comment history dialog
+       */
+      onCloseCommentsDialog: function () {
+        if (this._oCommentsDialog) {
+          this._oCommentsDialog.close();
+        }
+      }
 
 
 

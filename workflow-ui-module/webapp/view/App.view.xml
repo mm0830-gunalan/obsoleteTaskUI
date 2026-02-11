@@ -122,6 +122,13 @@
                                 />
 
                                 <!-- Adding two more button for comment -->
+                                <Button
+                                    text="Show All Comments"
+                                    icon="sap-icon://history"
+                                    tooltip="View comment history for selected rows"
+                                    press="onShowAllComments"
+                                    type="Transparent"
+                                />
 
                                 <Button
                                     text="Update Internal Use"
@@ -137,12 +144,6 @@
                                     visible="{context>/subsidiaryVisible}"
                                 />
 
-                                <!-- <Button
-                                    text="Update Comments"
-                                    type="Emphasized"
-                                    press="onUpdateComments"
-                                    visible="{= ${context>/subsidiaryVisible} || ${context>/alternativeVisible} }"
-                                /> -->
                                 <Button
                                     type="Accept"
                                     text="Save"

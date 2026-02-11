@@ -1,0 +1,162 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="commentsDialog"
+        title="All Comments"
+        draggable="true"
+        resizable="true"
+        contentWidth="1100px"
+        contentHeight="550px"
+    >
+        <Table items="{comments>/items}">
+            <columns>
+                <Column width="6rem">
+                    <Text text="Plant" />
+                </Column>
+
+                <Column width="12rem">
+                    <Text text="Component" />
+                </Column>
+
+                <Column width="18rem">
+                    <Text text="Handling" />
+                </Column>
+
+                <Column width="18rem">
+                    <Text text="Scrapping" />
+                </Column>
+
+                <Column width="18rem">
+                    <Text text="Internal Use" />
+                </Column>
+
+                <Column width="18rem">
+                    <Text text="Subsidiary" />
+                </Column>
+
+                <Column width="18rem">
+                    <Text text="Customer Response" />
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+                        <!-- Plant -->
+                        <Text text="{comments>plant}" />
+
+                        <!-- Component -->
+                        <Text text="{comments>component}" />
+
+                        <!-- Handling -->
+                        <VBox>
+                            <!-- <Text
+                                text="Handling: {comments>handling}"
+                                class="sapUiTinyMarginBottom"
+                            /> -->
+
+                            <ObjectStatus
+                                class="sapUiSmallMarginBottom"
+                                text="Handling: {comments>handling}"
+                                state="Information"
+                            />
+                            <TextArea
+                                value="{comments>commentHandling}"
+                                rows="3"
+                                width="100%"
+                                editable="false"
+                            />
+                        </VBox>
+
+                        <!-- Scrap -->
+                        <VBox>
+                            <!-- <Text
+                                text="Scrap: {comments>scrapDecision}"
+                                class="sapUiTinyMarginBottom"
+                            /> -->
+                            <ObjectStatus
+                                class="sapUiSmallMarginBottom"
+                                text="Scrap: {comments>scrapDecision}"
+                                state="Information"
+                            />
+                            <TextArea
+                                value="{comments>commentScrap}"
+                                rows="3"
+                                width="100%"
+                                editable="false"
+                            />
+                        </VBox>
+
+                        <!-- Internal Use -->
+                        <VBox>
+                            <!-- <Text
+                                text="Internal Use: {comments>internalUse}"
+                                class="sapUiTinyMarginBottom"
+                            /> -->
+
+                            <ObjectStatus
+                                class="sapUiSmallMarginBottom"
+                                text="Internal Use: {comments>internalUse}"
+                                state="Information"
+                            />
+                            <TextArea
+                                value="{comments>commentAlternative}"
+                                rows="3"
+                                width="100%"
+                                editable="false"
+                            />
+                        </VBox>
+
+                        <!-- Subsidiary -->
+                        <VBox>
+                            <!-- <Text
+                                text="Sell to Subsidiary: {comments>sellToSubsidiary}"
+                                class="sapUiTinyMarginBottom"
+                            /> -->
+                            <ObjectStatus
+                                class="sapUiSmallMarginBottom"
+                                text="Sell to Subsidiary: {comments>sellToSubsidiary}"
+                                state="Information"
+                            />
+                            <TextArea
+                                value="{comments>commentSubsidiary}"
+                                rows="3"
+                                width="100%"
+                                editable="false"
+                            />
+                        </VBox>
+
+                        <!-- Customer -->
+                        <VBox>
+                            <!-- <Text
+                                text="Customer Response: {comments>customerResponse}"
+                                class="sapUiTinyMarginBottom"
+                            /> -->
+
+                            <ObjectStatus
+                                class="sapUiSmallMarginBottom"
+                                text="Customer Response: {comments>customerResponse}"
+                                state="Information"
+                            />
+                            <TextArea
+                                value="{comments>commentComponent}"
+                                rows="3"
+                                width="100%"
+                                editable="false"
+                            />
+                        </VBox>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+
+        <endButton>
+            <Button
+                text="Close"
+                press="onCloseCommentsDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
