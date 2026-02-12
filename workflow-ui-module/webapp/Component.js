@@ -250,144 +250,136 @@ sap.ui.define(
         },
 
 
-        //Woked for update
+
         // _patchTaskInstance: async function (outcomeId) {
 
         //   const oRoot = this.getRootControl();
         //   oRoot.setBusy(true);
 
         //   try {
-        //     // 🔒 1. Check task status first
+        //     // 🔒 1. Check task status
         //     await this._checkTaskStatus();
-        //   } catch (sErrorMsg) {
-        //     oRoot.setBusy(false);
-        //     sap.m.MessageBox.warning(sErrorMsg);
-        //     return;
-        //   }
 
-        //   const context = this.getModel("context").getData();
-        //   const oModel = this.getModel("obsolete");
+        //     const oContextModel = this.getModel("context");
+        //     const context = oContextModel.getData();
+        //     const sWorkflowId = context.workflowId;
+        //     // const aItems = this.getModel("context").getProperty("/obsoleteItems");
 
-        //   const sWorkflowId = context.workflowId;
-        //   const aItems = this.getModel("context").getProperty("/obsoleteItems");
+        //     // // ✅ 2. Apply business rule BEFORE save
+        //     // aItems.forEach(item => {
+        //     //   if (item.customerResponse === "Customer doesn't pay") {
+        //     //     item.decisionFlow = "Customer doesn't pay";
+        //     //   }
+        //     // });
 
-        //   aItems.forEach(item => {
-        //     if (item.customerResponse === "Customer doesn't pay") {
-        //       item.decisionFlow = "Customer doesn't pay";
-        //     }
-        //   });
+        //     // 🔹 ACTIVE items (visible)
+        //     const aActiveItems = oContextModel.getProperty("/obsoleteItems") || [];
 
-        //   const oPayload = {
-        //     workflowId: sWorkflowId,
-        //     items: aItems
-        //   };
+        //     // 🔹 SOFT-DELETED items (hidden)
+        //     const aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
 
-        //   // 🔄 2. Update DB (deep update)
-        //   try {
-        //     await new Promise((resolve, reject) => {
-        //       oModel.update(`/WorkflowHeader('${sWorkflowId}')`, oPayload, {
-        //         success: resolve,
-        //         error: reject
-        //       });
-        //     });
-        //   } catch (oError) {
-        //     oRoot.setBusy(false);
-        //     sap.m.MessageBox.error("Failed to save data. Task not completed.");
-        //     console.error("Deep update error:", oError);
-        //     return;
-        //   }
-
-        //   // ✅ 3. Complete the task ONLY after DB update succeeds
-        //   const data = {
-        //     status: "COMPLETED",
-        //     context: {
-        //       companyCode: context.companyCode,
-        //       workflowId: context.workflowId,
-        //       workflowName: context.workflowName
-        //     },
-        //     decision: outcomeId
-        //   };
-
-        //   try {
-        //     await new Promise((resolve, reject) => {
-        //       jQuery.ajax({
-        //         url: this._getTaskInstancesBaseURL(),
-        //         method: "PATCH",
-        //         contentType: "application/json",
-        //         data: JSON.stringify(data),
-        //         headers: {
-        //           "X-CSRF-Token": this._fetchToken()
-        //         }
-        //       }).done(resolve).fail(reject);
+        //     //  2. Apply business rule ONLY on active items
+        //     aActiveItems.forEach(item => {
+        //       if (item.customerResponse === "Customer doesn't pay") {
+        //         item.decisionFlow = "Customer doesn't pay";
+        //       }
         //     });
 
-        //     // sap.m.MessageBox.success("Task submitted successfully");
+        //     // 🔁 3. MERGE active + deleted BEFORE submit
+        //     const aFinalItems = aActiveItems.concat(aDeletedItems);
+
+        //     //  3. Bulk update via custom CAP action (NO deletes risk)
+        //     await this._callBulkUpdate(sWorkflowId, aFinalItems);
+        //     oContextModel.setProperty("/deletedItems", []);
+        //     //  4. Complete task ONLY after DB update succeeds
+        //     await this._completeTask(outcomeId, context);
+
+        //     //  Refresh inbox
         //     this._refreshTaskList();
 
         //   } catch (oError) {
-        //     sap.m.MessageBox.error("Data saved, but task completion failed");
-        //     console.error("Task completion error:", oError);
+        //     sap.m.MessageBox.error(
+        //       typeof oError === "string" ? oError : "Submit failed"
+        //     );
+        //     console.error(oError);
+        //   } finally {
+        //     // 🧹 Always clear busy
+        //     oRoot.setBusy(false);
         //   }
-
-        //   // 🧹 4. Clear busy at the very end
-        //   oRoot.setBusy(false);
         // },
+
+
 
         _patchTaskInstance: async function (outcomeId) {
 
           const oRoot = this.getRootControl();
-          oRoot.setBusy(true);
 
-          try {
-            // 🔒 1. Check task status
-            await this._checkTaskStatus();
+          sap.m.MessageBox.confirm(
+            "Are you sure you want to submit this task?",
+            {
+              title: "Confirm Submission",
+              actions: [
+                sap.m.MessageBox.Action.YES,
+                sap.m.MessageBox.Action.NO
+              ],
+              emphasizedAction: sap.m.MessageBox.Action.YES,
 
-            const oContextModel = this.getModel("context");
-            const context = oContextModel.getData();
-            const sWorkflowId = context.workflowId;
-            // const aItems = this.getModel("context").getProperty("/obsoleteItems");
+              onClose: async function (oAction) {
 
-            // // ✅ 2. Apply business rule BEFORE save
-            // aItems.forEach(item => {
-            //   if (item.customerResponse === "Customer doesn't pay") {
-            //     item.decisionFlow = "Customer doesn't pay";
-            //   }
-            // });
+                if (oAction !== sap.m.MessageBox.Action.YES) {
+                  return;
+                }
 
-            // 🔹 ACTIVE items (visible)
-            const aActiveItems = oContextModel.getProperty("/obsoleteItems") || [];
+                oRoot.setBusy(true);
 
-            // 🔹 SOFT-DELETED items (hidden)
-            const aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
+                try {
+                  //  1. Check task status
+                  await this._checkTaskStatus();
 
-            //  2. Apply business rule ONLY on active items
-            aActiveItems.forEach(item => {
-              if (item.customerResponse === "Customer doesn't pay") {
-                item.decisionFlow = "Customer doesn't pay";
-              }
-            });
+                  const oContextModel = this.getModel("context");
+                  const context = oContextModel.getData();
+                  const sWorkflowId = context.workflowId;
 
-            // 🔁 3. MERGE active + deleted BEFORE submit
-            const aFinalItems = aActiveItems.concat(aDeletedItems);
+                  // 🔹 ACTIVE items
+                  const aActiveItems = oContextModel.getProperty("/obsoleteItems") || [];
 
-            //  3. Bulk update via custom CAP action (NO deletes risk)
-            await this._callBulkUpdate(sWorkflowId, aFinalItems);
-            oContextModel.setProperty("/deletedItems", []);
-            //  4. Complete task ONLY after DB update succeeds
-            await this._completeTask(outcomeId, context);
+                  // 🔹 SOFT-DELETED items
+                  const aDeletedItems = oContextModel.getProperty("/deletedItems") || [];
 
-            //  Refresh inbox
-            this._refreshTaskList();
+                  // 2. Apply business rule
+                  aActiveItems.forEach(item => {
+                    if (item.customerResponse === "Customer doesn't pay") {
+                      item.decisionFlow = "Customer doesn't pay";
+                    }
+                  });
 
-          } catch (oError) {
-            sap.m.MessageBox.error(
-              typeof oError === "string" ? oError : "Submit failed"
-            );
-            console.error(oError);
-          } finally {
-            // 🧹 Always clear busy
-            oRoot.setBusy(false);
-          }
+                  // 3. Merge active + deleted
+                  const aFinalItems = aActiveItems.concat(aDeletedItems);
+
+                  // 4. Bulk update
+                  await this._callBulkUpdate(sWorkflowId, aFinalItems);
+                  oContextModel.setProperty("/deletedItems", []);
+
+                  // 5. Complete task
+                  await this._completeTask(outcomeId, context);
+
+                  // 6. Refresh inbox
+                  this._refreshTaskList();
+
+                } catch (oError) {
+                  sap.m.MessageBox.error(
+                    typeof oError === "string"
+                      ? oError
+                      : "Submit failed"
+                  );
+                  console.error(oError);
+                } finally {
+                  oRoot.setBusy(false);
+                }
+
+              }.bind(this)
+            }
+          );
         },
         _completeTask: function (outcomeId, context) {
 

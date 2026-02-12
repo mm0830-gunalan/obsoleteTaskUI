@@ -15,7 +15,7 @@ sap.ui.define(
       // },
 
       onInit: function () {
-        this._getCurrentUser();
+        // this._getCurrentUser();
         setTimeout(() => {
           const oContextModel = this.getOwnerComponent().getModel("context");
 
@@ -153,6 +153,15 @@ sap.ui.define(
         oContextModel.setProperty("/componentVisible", false);
 
         oContextModel.setProperty("/decisionFlowVisible", true);
+
+
+
+        //For oldcomments visibility
+        oContextModel.setProperty("/scrapcmt", true);
+        oContextModel.setProperty("/alternativecmt", true);
+        oContextModel.setProperty("/subsidiarycmt", true);
+        oContextModel.setProperty("/componentcmt", true);
+        oContextModel.setProperty("/handlingcmt", true);
       },
 
 
@@ -1451,6 +1460,39 @@ sap.ui.define(
         * Opens a dialog showing comment history for all selected rows in a table format
         */
       onShowAllComments: function () {
+        const oModel = this.getView().getModel('context')
+        const sWorkflowName = oModel.getData().workflowName;
+        const sCaused = oModel.getData().caused
+        if (sWorkflowName === 'Plant' && sCaused === 'PlantCaused') {
+          MessageBox.information("No old comments")
+          return;
+        }
+        if (sWorkflowName === 'Customer') {
+          MessageBox.information("No old comments")
+          return;
+        }
+        if (sCaused === 'PlantCaused') {
+          oModel.setProperty("/componentcmt", false);
+        }
+        if (sWorkflowName === 'HandlingCaused' && sCaused === 'CustomerCaused') {
+          oModel.setProperty("/alternativecmt", false);
+          oModel.setProperty("/subsidiarycmt", false);
+          oModel.setProperty("/scrapcmt", false);
+          oModel.setProperty("/handlingcmt", false);
+
+        }
+        if (sWorkflowName === 'AlternativeUsage') {
+          oModel.setProperty("/alternativecmt", false);
+          oModel.setProperty("/subsidiarycmt", false);
+          oModel.setProperty("/scrapcmt", false);
+
+        } if (sWorkflowName === 'Scrap' || sWorkflowName==="ScrapSubsidiary") {
+          oModel.setProperty("/scrapcmt", false);
+        }
+        if ( sWorkflowName === 'Subsidiary') {
+          oModel.setProperty("/subsidiarycmt", false);
+          oModel.setProperty("/scrapcmt", false);
+        }
         const oTable = this.byId("obsoleteTable");
         const aSelectedIndices = oTable.getSelectedIndices();
 

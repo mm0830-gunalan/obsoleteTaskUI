@@ -7,144 +7,221 @@
         title="All Comments"
         draggable="true"
         resizable="true"
-        contentWidth="1100px"
-        contentHeight="550px"
+        contentWidth="1200px"
+        contentHeight="600px"
+        class="sapUiContentPadding"
     >
-        <Table items="{comments>/items}">
+        <Table
+            items="{comments>/items}"
+            class="sapUiSmallMarginTop"
+            alternateRowColors="true"
+            fixedLayout="true"
+        >
+            <headerToolbar>
+                <Toolbar>
+                    <Title
+                        text="Comments Overview"
+                        level="H2"
+                    />
+                </Toolbar>
+            </headerToolbar>
+
             <columns>
-                <Column width="6rem">
-                    <Text text="Plant" />
+                <Column
+                    width="8rem"
+                    hAlign="Center"
+                >
+                    <Text
+                        text="Plant"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="12rem">
-                    <Text text="Component" />
+                <Column
+                    width="10rem"
+                    hAlign="Center"
+                >
+                    <Text
+                        text="Component"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="18rem">
-                    <Text text="Handling" />
+                <Column
+                    width="20rem"
+                    hAlign="Left"
+                     visible="{context>/handlingcmt}"
+                >
+                    <Text
+                        text="Handling"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="18rem">
-                    <Text text="Scrapping" />
+                <Column
+                    width="20rem"
+                    hAlign="Left"
+                    visible="{context>/scrapcmt}"
+                >
+                    <Text
+                        text="Scrapping"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="18rem">
-                    <Text text="Internal Use" />
+                <Column
+                    width="20rem"
+                    hAlign="Left"
+                    visible="{context>/alternativecmt}"
+                >
+                    <Text
+                        text="Internal Use"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="18rem">
-                    <Text text="Subsidiary" />
+                <Column
+                    width="20rem"
+                    hAlign="Left"
+                    visible="{context>/subsidiarycmt}"
+                >
+                    <Text
+                        text="Subsidiary"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
 
-                <Column width="18rem">
-                    <Text text="Customer Response" />
+                <Column
+                    width="20rem"
+                    hAlign="Left"
+                    visible="{context>/componentcmt}"
+                >
+                    <Text
+                        text="Customer Response"
+                        class="sapUiSmallMarginBottom"
+                    />
                 </Column>
             </columns>
 
             <items>
-                <ColumnListItem>
+                <ColumnListItem vAlign="Top">
                     <cells>
                         <!-- Plant -->
-                        <Text text="{comments>plant}" />
+                        <VBox
+                            alignItems="Center"
+                            justifyContent="Center"
+                            class="sapUiSmallMargin"
+                        >
+                            <Text
+                                text="{comments>plant}"
+                                class="sapUiMediumMarginTop"
+                            />
+                        </VBox>
 
                         <!-- Component -->
-                        <Text text="{comments>component}" />
+                        <VBox
+                            alignItems="Center"
+                            justifyContent="Center"
+                            class="sapUiSmallMargin"
+                        >
+                            <Text
+                                text="{comments>component}"
+                                class="sapUiMediumMarginTop"
+                            />
+                        </VBox>
 
                         <!-- Handling -->
-                        <VBox>
-                            <!-- <Text
-                                text="Handling: {comments>handling}"
-                                class="sapUiTinyMarginBottom"
-                            /> -->
-
+                        <VBox
+                            class="sapUiSmallMargin"
+                            renderType="Bare"
+                        >
                             <ObjectStatus
-                                class="sapUiSmallMarginBottom"
+                                class="sapUiTinyMarginBottom"
                                 text="Handling: {comments>handling}"
                                 state="Information"
                             />
                             <TextArea
                                 value="{comments>commentHandling}"
-                                rows="3"
+                                rows="4"
                                 width="100%"
                                 editable="false"
+                                class="sapUiTinyMarginTop"
                             />
                         </VBox>
 
                         <!-- Scrap -->
-                        <VBox>
-                            <!-- <Text
-                                text="Scrap: {comments>scrapDecision}"
-                                class="sapUiTinyMarginBottom"
-                            /> -->
+                        <VBox
+                            class="sapUiSmallMargin"
+                            renderType="Bare"
+                        >
                             <ObjectStatus
-                                class="sapUiSmallMarginBottom"
+                                class="sapUiTinyMarginBottom"
                                 text="Scrap: {comments>scrapDecision}"
                                 state="Information"
                             />
                             <TextArea
                                 value="{comments>commentScrap}"
-                                rows="3"
+                                rows="4"
                                 width="100%"
                                 editable="false"
+                                class="sapUiTinyMarginTop"
                             />
                         </VBox>
 
                         <!-- Internal Use -->
-                        <VBox>
-                            <!-- <Text
-                                text="Internal Use: {comments>internalUse}"
-                                class="sapUiTinyMarginBottom"
-                            /> -->
-
+                        <VBox
+                            class="sapUiSmallMargin"
+                            renderType="Bare"
+                        >
                             <ObjectStatus
-                                class="sapUiSmallMarginBottom"
+                                class="sapUiTinyMarginBottom"
                                 text="Internal Use: {comments>internalUse}"
                                 state="Information"
                             />
                             <TextArea
                                 value="{comments>commentAlternative}"
-                                rows="3"
+                                rows="4"
                                 width="100%"
                                 editable="false"
+                                class="sapUiTinyMarginTop"
                             />
                         </VBox>
 
                         <!-- Subsidiary -->
-                        <VBox>
-                            <!-- <Text
-                                text="Sell to Subsidiary: {comments>sellToSubsidiary}"
-                                class="sapUiTinyMarginBottom"
-                            /> -->
+                        <VBox
+                            class="sapUiSmallMargin"
+                            renderType="Bare"
+                        >
                             <ObjectStatus
-                                class="sapUiSmallMarginBottom"
+                                class="sapUiTinyMarginBottom"
                                 text="Sell to Subsidiary: {comments>sellToSubsidiary}"
                                 state="Information"
                             />
                             <TextArea
                                 value="{comments>commentSubsidiary}"
-                                rows="3"
+                                rows="4"
                                 width="100%"
                                 editable="false"
+                                class="sapUiTinyMarginTop"
                             />
                         </VBox>
 
                         <!-- Customer -->
-                        <VBox>
-                            <!-- <Text
-                                text="Customer Response: {comments>customerResponse}"
-                                class="sapUiTinyMarginBottom"
-                            /> -->
-
+                        <VBox
+                            class="sapUiSmallMargin"
+                            renderType="Bare"
+                        >
                             <ObjectStatus
-                                class="sapUiSmallMarginBottom"
+                                class="sapUiTinyMarginBottom"
                                 text="Customer Response: {comments>customerResponse}"
                                 state="Information"
                             />
                             <TextArea
                                 value="{comments>commentComponent}"
-                                rows="3"
+                                rows="4"
                                 width="100%"
                                 editable="false"
+                                class="sapUiTinyMarginTop"
                             />
                         </VBox>
                     </cells>
@@ -156,6 +233,7 @@
             <Button
                 text="Close"
                 press="onCloseCommentsDialog"
+                type="Emphasized"
             />
         </endButton>
     </Dialog>
