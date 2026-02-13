@@ -1463,7 +1463,7 @@ sap.ui.define(
         const oModel = this.getView().getModel('context')
         const sWorkflowName = oModel.getData().workflowName;
         const sCaused = oModel.getData().caused
-        if (sWorkflowName === 'Plant' && sCaused === 'PlantCaused') {
+        if (sWorkflowName === 'Plant') {
           MessageBox.information("No old comments")
           return;
         }
