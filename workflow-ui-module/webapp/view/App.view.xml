@@ -38,7 +38,9 @@
                             <f:formContainers>
                                 <f:FormContainer>
                                     <f:formElements>
-                                        <f:FormElement label="Company Code">
+                                        <f:FormElement
+                                            label="{i18n>labelCompanyCode}"
+                                        >
                                             <f:fields>
                                                 <Text
                                                     text="{context>/companyCode}"
@@ -72,24 +74,24 @@
                                 <!-- SEARCH / FILTER -->
                                 <SearchField
                                     visible="true"
-                                    placeholder="Search..."
+                                    placeholder="{i18n>searchPlaceholder}"
                                     liveChange="onSearch"
                                     width="15rem"
                                 />
                                 <Button
                                     icon="sap-icon://filter"
                                     press="onOpenFilterDialog"
-                                    tooltip="Filter"
+                                    tooltip="{i18n>tooltipFilter}"
                                     visible="false"
                                 />
                                 <Button
                                     icon="sap-icon://excel-attachment"
-                                    tooltip="Export to Excel"
+                                    tooltip="{i18n>tooltipExportExcel}"
                                     press="onExportObsoleteItems"
                                     visible="false"
                                 />
                                 <Button
-                                    text="Delete"
+                                    text="{i18n>btnDelete}"
                                     type="Reject"
                                     icon="sap-icon://delete"
                                     press="onDeleteSelected"
@@ -97,25 +99,25 @@
 
                                 <Button
                                     icon="sap-icon://clear-filter"
-                                    tooltip="Clear all filters"
+                                    tooltip="{i18n>btnClearFilters}"
                                     press="onClearAllFilters"
                                 />
 
                                 <!--  EXTRA CUSTOM BUTTON -->
                                 <Button
-                                    text="Update Handling"
+                                    text="{i18n>btnUpdateHandling}"
                                     type="Emphasized"
                                     press="onUpdateHandling"
                                     visible="{context>/handlingEditable}"
                                 />
                                 <Button
-                                    text="Update Scrap Decision"
+                                    text="{i18n>btnUpdateScrap}"
                                     type="Emphasized"
                                     press="onUpdateScrap"
                                     visible="{context>/scrapEditable}"
                                 />
                                 <Button
-                                    text="Update Customer Response"
+                                    text="{i18n>btnUpdateCustomer}"
                                     type="Emphasized"
                                     press="onUpdateCustomer"
                                     visible="{context>/componentVisible}"
@@ -123,22 +125,22 @@
 
                                 <!-- Adding two more button for comment -->
                                 <Button
-                                    text="Show All Comments"
+                                    text="{i18n>btnShowComments}"
                                     icon="sap-icon://history"
-                                    tooltip="View comment history for selected rows"
+                                    tooltip="{i18n>tooltipShowComments}"
                                     press="onShowAllComments"
                                     type="Transparent"
                                 />
 
                                 <Button
-                                    text="Update Internal Use"
+                                    text="{i18n>btnUpdateInternal}"
                                     type="Emphasized"
                                     press="onUpdateInternal"
                                     visible="{context>/alternativeVisible}"
                                 />
 
                                 <Button
-                                    text="Update Subsidiary"
+                                    text="{i18n>btnUpdateSubsidiary}"
                                     type="Emphasized"
                                     press="onUpdateSubsidiary"
                                     visible="{context>/subsidiaryVisible}"
@@ -146,7 +148,7 @@
 
                                 <Button
                                     type="Accept"
-                                    text="Save"
+                                    text="{i18n>btnSave}"
                                     press=".onSave"
                                 />
                             </OverflowToolbar>
@@ -157,7 +159,7 @@
                                 sortProperty="plant"
                                 filterProperty="plant"
                             >
-                                <Label text="Plant" />
+                                <Label text="{i18n>colPlant}" />
                                 <table:template>
                                     <Text text="{context>plant}" />
                                 </table:template>
@@ -168,7 +170,7 @@
                                 sortProperty="component"
                                 filterProperty="component"
                             >
-                                <Label text="Component" />
+                                <Label text="{i18n>colComponent}" />
                                 <table:template>
                                     <Text text="{context>component}" />
                                 </table:template>
@@ -179,7 +181,7 @@
                                 sortProperty="description"
                                 filterProperty="description"
                             >
-                                <Label text="Description" />
+                                <Label text="{i18n>colDescription}" />
                                 <table:template>
                                     <Text
                                         text="{context>description}"
@@ -193,7 +195,7 @@
                                 sortProperty="rfqId"
                                 filterProperty="rfqId"
                             >
-                                <Label text="RFQ ID" />
+                                <Label text="{i18n>colRfqId}" />
                                 <table:template>
                                     <Text text="{context>rfqId}" />
                                 </table:template>
@@ -204,7 +206,7 @@
                                 sortProperty="manufacturerPart"
                                 filterProperty="manufacturerPart"
                             >
-                                <Label text="Manufacture Part" />
+                                <Label text="{i18n>colManufacturerPart}" />
                                 <table:template>
                                     <Text text="{context>manufacturerPart}" />
                                 </table:template>
@@ -215,7 +217,7 @@
                                 sortProperty="availableStock"
                                 filterProperty="availableStock"
                             >
-                                <Label text="Available Stock" />
+                                <Label text="{i18n>colAvailableStock}" />
                                 <table:template>
                                     <Text text="{context>availableStock}" />
                                 </table:template>
@@ -226,21 +228,21 @@
                                 sortProperty="availableCu"
                                 filterProperty="availableCu"
                             >
-                                <Label text="Free stock full copper" />
+                                <Label text="{i18n>colAvailableCu}" />
                                 <table:template>
                                     <Text text="{context>availableCu}" />
                                 </table:template>
                             </table:Column>
 
                             <table:Column width="5rem">
-                                <Label text="Currency" />
+                                <Label text="{i18n>colCurrency}" />
                                 <table:template>
                                     <Text text="{context>currency}" />
                                 </table:template>
                             </table:Column>
 
                             <table:Column width="9rem">
-                                <Label text="Last Consumption" />
+                                <Label text="{i18n>colLastConsumption}" />
                                 <table:template>
                                     <Text
                                         text="{path: 'context>lastConsumption', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'}}"
@@ -253,7 +255,7 @@
                                 sortProperty="rangeCoverage"
                                 filterProperty="rangeCoverage"
                             >
-                                <Label text="Range Coverage" />
+                                <Label text="{i18n>colRangeCoverage}" />
                                 <table:template>
                                     <Text text="{context>rangeCoverage}" />
                                 </table:template>
@@ -264,7 +266,7 @@
                                 sortProperty="pn"
                                 filterProperty="pn"
                             >
-                                <Label text="PN" />
+                                <Label text="{i18n>colPn}" />
                                 <table:template>
                                     <Text text="{context>pn}" />
                                 </table:template>
@@ -275,7 +277,7 @@
                                 sortProperty="customer"
                                 filterProperty="customer"
                             >
-                                <Label text="Customer" />
+                                <Label text="{i18n>colCustomer}" />
                                 <table:template>
                                     <Text text="{context>customer}" />
                                 </table:template>
@@ -286,7 +288,7 @@
                                 sortProperty="endCustomer"
                                 filterProperty="endCustomer"
                             >
-                                <Label text="End Customer" />
+                                <Label text="{i18n>colEndCustomer}" />
                                 <table:template>
                                     <Text text="{context>endCustomer}" />
                                 </table:template>
@@ -297,7 +299,7 @@
                                 sortProperty="reason"
                                 filterProperty="reason"
                             >
-                                <Label text="Reason" />
+                                <Label text="{i18n>colReason}" />
                                 <table:template>
                                     <Text text="{context>reason}" />
                                 </table:template>
@@ -308,7 +310,7 @@
                                 sortProperty="caused"
                                 filterProperty="caused"
                             >
-                                <Label text="Caused" />
+                                <Label text="{i18n>colCaused}" />
                                 <table:template>
                                     <Text text="{context>caused}" />
                                 </table:template>
@@ -319,7 +321,7 @@
                                 sortProperty="totalAmount"
                                 filterProperty="totalAmount"
                             >
-                                <Label text="Total Amount" />
+                                <Label text="{i18n>colTotalAmount}" />
                                 <table:template>
                                     <Text text="{context>totalAmount}" />
                                 </table:template>
@@ -330,7 +332,7 @@
                                 sortProperty="weight"
                                 filterProperty="weight"
                             >
-                                <Label text="Weight" />
+                                <Label text="{i18n>colWeight}" />
                                 <table:template>
                                     <Text text="{context>weight}" />
                                 </table:template>
@@ -342,7 +344,7 @@
                                 filterProperty="decisionFlow"
                                 visible="{context>/decisionFlowVisible}"
                             >
-                                <Label text="Decision Flow" />
+                                <Label text="{i18n>colDecisionFlow}" />
                                 <table:template>
                                     <Text text="{context>decisionFlow}" />
                                 </table:template>
@@ -354,7 +356,7 @@
                                 visible="{context>/handlingVisible}"
                             >
                                 <Label
-                                    text="Handling"
+                                    text="{i18n>colHandling}"
                                     required="{context>/handlingRequired}"
                                 />
                                 <table:template>
@@ -366,15 +368,15 @@
                                     >
                                         <core:Item
                                             key=""
-                                            text="-----Select-----"
+                                            text="{i18n>selectPlaceholder}"
                                         />
                                         <core:Item
                                             key="Scrapping"
-                                            text="Scrapping"
+                                            text="{i18n>handlingScrapping}"
                                         />
                                         <core:Item
                                             key="Alternative use"
-                                            text="Alternative use"
+                                            text="{i18n>handlingAlternative}"
                                         />
                                     </Select>
                                 </table:template>
@@ -385,7 +387,7 @@
                                 visible="{context>/componentVisible}"
                             >
                                 <Label
-                                    text="Customer Response"
+                                    text="{i18n>colCustomerResponse}"
                                     required="{context>/componentVisible}"
                                 />
                                 <table:template>
@@ -396,19 +398,19 @@
                                     >
                                         <core:Item
                                             key=""
-                                            text="-----Select-----"
+                                            text="{i18n>selectPlaceholder}"
                                         />
                                         <core:Item
                                             key="Customer doesn't pay"
-                                            text="Customer doesn't pay"
+                                            text="{i18n>customerNoPay}"
                                         />
                                         <core:Item
                                             key="Customer pays"
-                                            text="Customer pays"
+                                            text="{i18n>customerPays}"
                                         />
                                         <core:Item
                                             key="Customer purchase obsolete stock"
-                                            text="Customer purchase obsolete stock"
+                                            text="{i18n>customerPurchaseStock}"
                                         />
                                     </Select>
                                 </table:template>
@@ -418,7 +420,7 @@
                                 width="10rem"
                                 visible="{context>/alternativeVisible}"
                             >
-                                <Label text="Internal Use" />
+                                <Label text="{i18n>colInternalUse}" />
                                 <table:template>
                                     <CheckBox
                                         selected="{context>internalUse}"
@@ -430,7 +432,7 @@
                                 width="10rem"
                                 visible="{context>/subsidiaryVisible}"
                             >
-                                <Label text="Sell to subsidiary" />
+                                <Label text="{i18n>colSellSubsidiary}" />
                                 <table:template>
                                     <CheckBox
                                         selected="{context>sellToSubsidiary}"
@@ -443,7 +445,7 @@
                                 visible="{context>/scrapVisible}"
                             >
                                 <Label
-                                    text="Scrapping"
+                                    text="{i18n>colScrapping}"
                                     required="{context>/scrapRequired}"
                                 />
                                 <table:template>
@@ -455,15 +457,15 @@
                                     >
                                         <core:Item
                                             key=""
-                                            text="-----Select-----"
+                                            text="{i18n>selectPlaceholder}"
                                         />
                                         <core:Item
                                             key="To be scrapped"
-                                            text="To be scrapped"
+                                            text="{i18n>scrapToBeScrapped}"
                                         />
                                         <core:Item
                                             key="Keep"
-                                            text="Keep"
+                                            text="{i18n>scrapKeep}"
                                         />
                                     </Select>
                                 </table:template>
@@ -473,7 +475,7 @@
                                 width="18rem"
                                 visible="{context>/handlingRequired}"
                             >
-                                <Label text="Comments" />
+                                <Label text="{i18n>colComments}" />
                                 <table:template>
                                     <TextArea
                                         width="100%"
@@ -488,7 +490,7 @@
                                 width="18rem"
                                 visible="{context>/scrapRequired}"
                             >
-                                <Label text="Comments" />
+                                <Label text="{i18n>colComments}" />
                                 <table:template>
                                     <TextArea
                                         width="100%"
@@ -503,7 +505,7 @@
                                 width="18rem"
                                 visible="{context>/alternativeVisible}"
                             >
-                                <Label text="Comments" />
+                                <Label text="{i18n>colComments}" />
                                 <table:template>
                                     <TextArea
                                         width="100%"
@@ -518,7 +520,7 @@
                                 width="18rem"
                                 visible="{context>/subsidiaryVisible}"
                             >
-                                <Label text="Comments" />
+                                <Label text="{i18n>colComments}" />
                                 <table:template>
                                     <TextArea
                                         width="100%"
@@ -533,7 +535,7 @@
                                 width="18rem"
                                 visible="{context>/componentVisible}"
                             >
-                                <Label text="Comments" />
+                                <Label text="{i18n>colComments}" />
                                 <table:template>
                                     <TextArea
                                         width="100%"
