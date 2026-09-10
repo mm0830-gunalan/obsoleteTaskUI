@@ -69,22 +69,24 @@ sap.ui.define(
 
         ];
         aFilters.push(new sap.ui.model.Filter("isActive", sap.ui.model.FilterOperator.EQ, true))
-        if (sWorkflowName === 'Plant'
-        ) {
-          oContextModel.setProperty("/handlingVisible", true);
-          oContextModel.setProperty("/handlingEditable", true);
-          oContextModel.setProperty("/handlingRequired", true);
-          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
-        } else if (sWorkflowName === 'Customer') {
+        // if (sWorkflowName === 'Plant'
+        // ) {
+        //   oContextModel.setProperty("/handlingVisible", true);
+        //   oContextModel.setProperty("/handlingEditable", true);
+        //   oContextModel.setProperty("/handlingRequired", true);
+        //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
+        // }
+          if (sWorkflowName === 'Customer') {
           oContextModel.setProperty("/componentVisible", true);
           oContextModel.setProperty("/decisionFlowVisible", false);
           aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+           aFilters.push(new sap.ui.model.Filter("costTakeOver", sap.ui.model.FilterOperator.EQ, "No"))
         } else if (sWorkflowName === 'Scrap') {
           oContextModel.setProperty("/scrapVisible", true);
           oContextModel.setProperty("/scrapEditable", true);
           oContextModel.setProperty("/scrapRequired", true);
           aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Scrapping"))
-        } else if (sWorkflowName === 'AlternativeUsage') {
+        } else if (sWorkflowName === 'AlternativeUse') {
           oContextModel.setProperty("/alternativeVisible", true);
           aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Alternative use"))
         } else if (sWorkflowName === 'Subsidiary') {
@@ -99,23 +101,24 @@ sap.ui.define(
           aFilters.push(new sap.ui.model.Filter("handling", sap.ui.model.FilterOperator.EQ, "Alternative use"))
           aFilters.push(new sap.ui.model.Filter("internalUse", sap.ui.model.FilterOperator.EQ, false))
           aFilters.push(new sap.ui.model.Filter("sellToSubsidiary", sap.ui.model.FilterOperator.EQ, false))
-        } else if (sWorkflowName === 'HandlingCaused') {
-          oContextModel.setProperty("/handlingVisible", true);
-          oContextModel.setProperty("/handlingEditable", true);
-          oContextModel.setProperty("/handlingRequired", true);
         }
+        //  else if (sWorkflowName === 'HandlingCaused') {
+        //   oContextModel.setProperty("/handlingVisible", true);
+        //   oContextModel.setProperty("/handlingEditable", true);
+        //   oContextModel.setProperty("/handlingRequired", true);
+        // }
 
-        if (sCaused === "PlantCaused") {
-          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
-        } else if (sCaused === "CustomerCaused") {
-          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
-          aFilters.push(new sap.ui.model.Filter("decisionFlow", sap.ui.model.FilterOperator.EQ, "Customer doesn't pay"))
-        }
+        // if (sCaused === "PlantCaused") {
+        //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
+        // } else if (sCaused === "CustomerCaused") {
+        //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+        //   aFilters.push(new sap.ui.model.Filter("decisionFlow", sap.ui.model.FilterOperator.EQ, "Customer doesn't pay"))
+        // }
 
         oModel.read("/WorkflowItem", {
           filters: aFilters,
           success: (oData) => {
-            console.log("CAP Data:", oData);
+
             const oResult = oData.results;
 
             // 1. Create new JSON model

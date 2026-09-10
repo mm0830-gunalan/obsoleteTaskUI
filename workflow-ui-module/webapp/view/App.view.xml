@@ -318,17 +318,6 @@
 
                             <table:Column
                                 width="8rem"
-                                sortProperty="totalAmount"
-                                filterProperty="totalAmount"
-                            >
-                                <Label text="{i18n>colTotalAmount}" />
-                                <table:template>
-                                    <Text text="{context>totalAmount}" />
-                                </table:template>
-                            </table:Column>
-
-                            <table:Column
-                                width="8rem"
                                 sortProperty="weight"
                                 filterProperty="weight"
                             >
@@ -347,6 +336,19 @@
                                 <Label text="{i18n>colDecisionFlow}" />
                                 <table:template>
                                     <Text text="{context>decisionFlow}" />
+                                </table:template>
+                            </table:Column>
+
+                            <table:Column
+                                width="8rem"
+                                sortProperty="goodsReceipt"
+                                filterProperty="goodsReceipt"
+                            >
+                                <Label text="{i18n>colGoodsReceipt}" />
+                                <table:template>
+                                    <Text
+                                        text="{path: 'context>goodsReceipt', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'}}"
+                                    />
                                 </table:template>
                             </table:Column>
 
@@ -401,16 +403,12 @@
                                             text="{i18n>selectPlaceholder}"
                                         />
                                         <core:Item
-                                            key="Customer doesn't pay"
-                                            text="{i18n>customerNoPay}"
-                                        />
-                                        <core:Item
                                             key="Customer pays"
                                             text="{i18n>customerPays}"
                                         />
                                         <core:Item
-                                            key="Customer purchase obsolete stock"
-                                            text="{i18n>customerPurchaseStock}"
+                                            key="Customer purchases obsolete stock"
+                                            text="{i18n>customerPurchasesStock}"
                                         />
                                     </Select>
                                 </table:template>
