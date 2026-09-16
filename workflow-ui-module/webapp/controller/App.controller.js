@@ -76,11 +76,11 @@ sap.ui.define(
         //   oContextModel.setProperty("/handlingRequired", true);
         //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
         // }
-          if (sWorkflowName === 'Customer') {
+        if (sWorkflowName === 'AlignCost') {
           oContextModel.setProperty("/componentVisible", true);
           oContextModel.setProperty("/decisionFlowVisible", false);
-          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
-           aFilters.push(new sap.ui.model.Filter("costTakeOver", sap.ui.model.FilterOperator.EQ, "No"))
+          // aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+          aFilters.push(new sap.ui.model.Filter("costTakeOver", sap.ui.model.FilterOperator.EQ, "No"))
         } else if (sWorkflowName === 'Scrap') {
           oContextModel.setProperty("/scrapVisible", true);
           oContextModel.setProperty("/scrapEditable", true);
@@ -108,12 +108,12 @@ sap.ui.define(
         //   oContextModel.setProperty("/handlingRequired", true);
         // }
 
-        // if (sCaused === "PlantCaused") {
-        //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Plant"))
-        // } else if (sCaused === "CustomerCaused") {
-        //   aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
-        //   aFilters.push(new sap.ui.model.Filter("decisionFlow", sap.ui.model.FilterOperator.EQ, "Customer doesn't pay"))
-        // }
+        if (sCaused === "Lapp") {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Lapp"))
+        } else if (sCaused === "Customer") {
+          aFilters.push(new sap.ui.model.Filter("caused", sap.ui.model.FilterOperator.EQ, "Customer"))
+          // aFilters.push(new sap.ui.model.Filter("customerResponse", sap.ui.model.FilterOperator.EQ, "LAPP checks internal usage"))
+        }
 
         oModel.read("/WorkflowItem", {
           filters: aFilters,
@@ -1489,10 +1489,10 @@ sap.ui.define(
           oModel.setProperty("/subsidiarycmt", false);
           oModel.setProperty("/scrapcmt", false);
 
-        } if (sWorkflowName === 'Scrap' || sWorkflowName==="ScrapSubsidiary") {
+        } if (sWorkflowName === 'Scrap' || sWorkflowName === "ScrapSubsidiary") {
           oModel.setProperty("/scrapcmt", false);
         }
-        if ( sWorkflowName === 'Subsidiary') {
+        if (sWorkflowName === 'Subsidiary') {
           oModel.setProperty("/subsidiarycmt", false);
           oModel.setProperty("/scrapcmt", false);
         }

@@ -17,16 +17,16 @@
             >
                 <items>
                     <core:Item
-                        key="Customer doesn't pay"
-                        text="Customer doesn't pay"
+                        key="LAPP checks internal usage"
+                        text="LAPP checks internal usage"
                     />
                     <core:Item
-                        key="Customer pays"
-                        text="Customer pays"
+                        key="Customer pays for scrapping"
+                        text="Customer pays for scrapping"
                     />
                     <core:Item
-                        key="Customer purchase obsolete stock"
-                        text="Customer purchase obsolete stock"
+                        key="Customer purchases obsolete stock"
+                        text="Customer purchases obsolete stock"
                     />
                 </items>
             </Select>

@@ -225,12 +225,12 @@
 
                             <table:Column
                                 width="14rem"
-                                sortProperty="availableCu"
-                                filterProperty="availableCu"
+                                sortProperty="freeStockfullcopper"
+                                filterProperty="freeStockfullcopper"
                             >
-                                <Label text="{i18n>colAvailableCu}" />
+                                <Label text="{i18n>colFreeStock}" />
                                 <table:template>
-                                    <Text text="{context>availableCu}" />
+                                    <Text text="{context>freeStockfullcopper}" />
                                 </table:template>
                             </table:Column>
 
@@ -353,7 +353,7 @@
                             </table:Column>
 
                             <!-- Editable -->
-                            <table:Column
+                            <!-- <table:Column
                                 width="15rem"
                                 visible="{context>/handlingVisible}"
                             >
@@ -382,7 +382,7 @@
                                         />
                                     </Select>
                                 </table:template>
-                            </table:Column>
+                            </table:Column> -->
 
                             <table:Column
                                 width="15rem"
@@ -403,7 +403,11 @@
                                             text="{i18n>selectPlaceholder}"
                                         />
                                         <core:Item
-                                            key="Customer pays"
+                                            key="LAPP checks internal usage"
+                                            text="{i18n>lappCheckInternalUsage}"
+                                        />
+                                        <core:Item
+                                            key="Customer pays for scrapping"
                                             text="{i18n>customerPays}"
                                         />
                                         <core:Item
